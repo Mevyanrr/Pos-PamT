@@ -1,4 +1,4 @@
-package com.example.pos_pamt.ui
+package com.example.pos_pamt.ui.view
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
