@@ -1,5 +1,9 @@
 package com.example.pos_pamt.navigation
 
+import com.example.pos_pamt.ui.view.DashboardScreen
+import com.example.pos_pamt.ui.view.ListBarangScreen
+import com.example.pos_pamt.ui.view.ListKasScreen
+import com.example.pos_pamt.ui.view.LoginScreen
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.CircularProgressIndicator
@@ -14,7 +18,6 @@ import androidx.navigation.compose.rememberNavController
 import com.pos.pamt.viewmodel.BarangViewModel
 import com.pos.pamt.viewmodel.KasViewModel
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.ui.graphics.BlendMode.Companion.Screen
 import com.example.pos_pamt.viewmodel.AuthCheckState
 import com.example.pos_pamt.viewmodel.AuthUiState
 import com.example.pos_pamt.viewmodel.AuthViewModel
