@@ -331,6 +331,6 @@ private fun StatKasCard(
     }
 }
 
-private fun formatRupiah(amount: Long): String {
-    return "Rp " + "%,d".format(amount).replace(',', '.')
+private fun formatRupiah(amount: Double): String {
+    return "Rp " + "%,.0f".format(amount).replace(',', '.')
 }

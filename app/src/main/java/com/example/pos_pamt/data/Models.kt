@@ -5,22 +5,20 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class Barang(
-    val id: Int = 0,
-    val nama: String = "",
-    val harga: Long = 0,
-    val stok: Int = 0,
-    val kategori: String = "",
-
+    val id      : String  = "",
+    val nama    : String  = "",
+    val harga   : Double  = 0.0,
+    val stok    : Double  = 0.0,
     @SerialName("is_active")
     val isActive: Boolean = true
 )
 
 @Serializable
 data class Kas(
-    val id: Int = 0,
-    val nama: String = "",
-    val saldo: Long = 0,
-
+    val id      : String  = "",
+    @SerialName("nama_kas")
+    val nama    : String  = "",
+    val saldo   : Double  = 0.0,
     @SerialName("is_active")
     val isActive: Boolean = true
 )

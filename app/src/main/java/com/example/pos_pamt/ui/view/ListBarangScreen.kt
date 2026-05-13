@@ -32,9 +32,8 @@ fun ListBarangScreen(
     viewModel   : BarangViewModel,
     onBackClick : () -> Unit
 ) {
-    // Collect state dari ViewModel
-    val barangState  = viewModel.barangState.collectAsStateWithLifecycle()
-    val searchQuery  = viewModel.searchQuery.collectAsStateWithLifecycle()
+    val barangState = viewModel.barangState.collectAsStateWithLifecycle()
+    val searchQuery = viewModel.searchQuery.collectAsStateWithLifecycle()
 
     Column(
         modifier = Modifier
@@ -53,7 +52,7 @@ fun ListBarangScreen(
                 .padding(top = 48.dp, bottom = 20.dp)
         ) {
             Row(
-                verticalAlignment = Alignment.CenterVertically,
+                verticalAlignment     = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(12.dp)
             ) {
                 IconButton(
@@ -68,9 +67,9 @@ fun ListBarangScreen(
 
                 Column {
                     Text(
-                        text     = "Inventori",
-                        fontSize = 11.sp,
-                        color    = Color.White.copy(alpha = 0.7f),
+                        text          = "Inventori",
+                        fontSize      = 11.sp,
+                        color         = Color.White.copy(alpha = 0.7f),
                         letterSpacing = 0.7.sp
                     )
                     Text(
@@ -89,7 +88,6 @@ fun ListBarangScreen(
                 .padding(horizontal = 20.dp)
                 .padding(top = 18.dp)
         ) {
-
             OutlinedTextField(
                 value         = searchQuery.value,
                 onValueChange = viewModel::onSearchQueryChange,
@@ -98,21 +96,20 @@ fun ListBarangScreen(
                 modifier      = Modifier
                     .fillMaxWidth()
                     .padding(bottom = 16.dp),
-                shape         = RoundedCornerShape(12.dp),
-                singleLine    = true,
-                colors = OutlinedTextFieldDefaults.colors(
-                    focusedBorderColor = TealPrimary,
-                    unfocusedBorderColor = TealPrimary.copy(alpha = 0.3f),
-                    focusedContainerColor = Color.White,
+                shape      = RoundedCornerShape(12.dp),
+                singleLine = true,
+                colors     = OutlinedTextFieldDefaults.colors(
+                    focusedBorderColor      = TealPrimary,
+                    unfocusedBorderColor    = TealPrimary.copy(alpha = 0.3f),
+                    focusedContainerColor   = Color.White,
                     unfocusedContainerColor = Color.White,
-                    disabledContainerColor = Color.White
+                    disabledContainerColor  = Color.White
                 )
             )
 
             when (val state = barangState.value) {
 
-                is DataUiState.Idle -> {
-                }
+                is DataUiState.Idle -> {}
 
                 is DataUiState.Loading -> {
                     Box(
@@ -164,11 +161,10 @@ fun ListBarangScreen(
 
                 is DataUiState.Success -> {
                     val filtered = state.data.filter { barang ->
-                        barang.nama.contains(searchQuery.value, ignoreCase = true) ||
-                                barang.kategori.contains(searchQuery.value, ignoreCase = true)
+                        barang.nama.contains(searchQuery.value, ignoreCase = true)
                     }
 
-                    val stokMenipis = filtered.count { it.stok < 10 }
+                    val stokMenipis = filtered.count { it.stok < 10.0 }
 
                     Row(
                         modifier              = Modifier
@@ -177,20 +173,20 @@ fun ListBarangScreen(
                         horizontalArrangement = Arrangement.spacedBy(10.dp)
                     ) {
                         StatMiniCard(
-                            label = "Total SKU",
-                            value = "${filtered.size}",
-                            badge = "Aktif: ${filtered.count { it.isActive }}",
-                            badgeColor = Color(0xFFDCFCE7),
+                            label          = "Total SKU",
+                            value          = "${filtered.size}",
+                            badge          = "Aktif: ${filtered.count { it.isActive }}",
+                            badgeColor     = Color(0xFFDCFCE7),
                             badgeTextColor = Color(0xFF16A34A),
-                            modifier = Modifier.weight(1f)
+                            modifier       = Modifier.weight(1f)
                         )
                         StatMiniCard(
-                            label = "Stok Menipis",
-                            value = "$stokMenipis",
-                            badge = "Perlu restock",
-                            badgeColor = Color(0xFFFEE2E2),
+                            label          = "Stok Menipis",
+                            value          = "$stokMenipis",
+                            badge          = "Perlu restock",
+                            badgeColor     = Color(0xFFFEE2E2),
                             badgeTextColor = DangerRed,
-                            modifier = Modifier.weight(1f)
+                            modifier       = Modifier.weight(1f)
                         )
                     }
 
@@ -202,15 +198,15 @@ fun ListBarangScreen(
                         colors = CardDefaults.cardColors(containerColor = TealLight)
                     ) {
                         Row(
-                            modifier          = Modifier.padding(10.dp),
+                            modifier              = Modifier.padding(10.dp),
                             horizontalArrangement = Arrangement.spacedBy(8.dp),
-                            verticalAlignment = Alignment.Top
+                            verticalAlignment     = Alignment.Top
                         ) {
                             Text(text = "ℹ️", fontSize = 14.sp)
                             Text(
-                                text     = "Kasir hanya bisa melihat produk (read-only). Tambah/Edit/Hapus hanya untuk Admin.",
-                                fontSize = 11.sp,
-                                color    = Color(0xFF3D6360),
+                                text       = "Kasir hanya bisa melihat produk (read-only). Tambah/Edit/Hapus hanya untuk Admin.",
+                                fontSize   = 11.sp,
+                                color      = Color(0xFF3D6360),
                                 lineHeight = 16.sp
                             )
                         }
@@ -260,8 +256,8 @@ fun ListBarangScreen(
 @Composable
 private fun BarangRow(barang: Barang) {
     Row(
-        modifier          = Modifier.padding(horizontal = 16.dp, vertical = 12.dp),
-        verticalAlignment = Alignment.CenterVertically,
+        modifier              = Modifier.padding(horizontal = 16.dp, vertical = 12.dp),
+        verticalAlignment     = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(12.dp)
     ) {
         Box(
@@ -271,10 +267,7 @@ private fun BarangRow(barang: Barang) {
                 .background(TealLight),
             contentAlignment = Alignment.Center
         ) {
-            Text(
-                text     = emojiKategori(barang.kategori),
-                fontSize = 20.sp
-            )
+            Text(text = "📦", fontSize = 20.sp)
         }
 
         Column(modifier = Modifier.weight(1f)) {
@@ -284,15 +277,15 @@ private fun BarangRow(barang: Barang) {
                 fontWeight = FontWeight.SemiBold,
                 color      = TextDark
             )
-            if (barang.stok < 10) {
+            if (barang.stok < 10.0) {
                 Row(
-                    verticalAlignment  = Alignment.CenterVertically,
+                    verticalAlignment     = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.spacedBy(4.dp),
-                    modifier = Modifier.padding(top = 2.dp)
+                    modifier              = Modifier.padding(top = 2.dp)
                 ) {
                     Text(text = "⚠️", fontSize = 10.sp)
                     Text(
-                        text       = "Stok: ${barang.stok} pcs · menipis!",
+                        text       = "Stok: ${barang.stok.toInt()} pcs · menipis!",
                         fontSize   = 11.sp,
                         color      = DangerRed,
                         fontWeight = FontWeight.SemiBold
@@ -300,7 +293,7 @@ private fun BarangRow(barang: Barang) {
                 }
             } else {
                 Text(
-                    text     = "Stok: ${barang.stok} pcs · is_active: ${barang.isActive}",
+                    text     = "Stok: ${barang.stok.toInt()} pcs · ${if (barang.isActive) "Aktif" else "Nonaktif"}",
                     fontSize = 11.sp,
                     color    = TextGray,
                     modifier = Modifier.padding(top = 2.dp)
@@ -309,21 +302,11 @@ private fun BarangRow(barang: Barang) {
         }
 
         Text(
-            text       = "Rp ${"%,d".format(barang.harga).replace(',', '.')}",
+            text       = "Rp ${"%,.0f".format(barang.harga).replace(',', '.')}",
             fontSize   = 13.sp,
             fontWeight = FontWeight.Bold,
             color      = TealPrimary
         )
-    }
-}
-
-private fun emojiKategori(kategori: String): String {
-    return when (kategori.lowercase()) {
-        "obat"       -> "💊"
-        "makanan"    -> "🫙"
-        "kebersihan" -> "🧴"
-        "alat tulis" -> "✏️"
-        else         -> "📦"
     }
 }
 
@@ -344,9 +327,9 @@ private fun StatMiniCard(
     ) {
         Column(modifier = Modifier.padding(14.dp)) {
             Text(
-                text     = label,
-                fontSize = 10.sp,
-                color    = TextGray,
+                text          = label,
+                fontSize      = 10.sp,
+                color         = TextGray,
                 letterSpacing = 0.6.sp
             )
             Text(
