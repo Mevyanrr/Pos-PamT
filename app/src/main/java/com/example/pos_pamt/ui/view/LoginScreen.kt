@@ -13,8 +13,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.pos.pamt.viewmodel.AuthUiState
-
+import com.example.pos_pamt.viewmodel.AuthUiState
 private val TealPrimary = Color(0xFF00B5A3)
 private val TealLight = Color(0xFFE0FAF7)
 private val TextDark = Color(0xFF0D2B2A)
