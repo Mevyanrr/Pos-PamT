@@ -1,6 +1,6 @@
 package com.example.pos_pamt.repository
 
-import com.pos.pamt.data.SupabaseClientProvider
+import com.example.pos_pamt.data.SupabaseClientProvider
 import io.github.jan.supabase.auth.auth
 import io.github.jan.supabase.auth.providers.builtin.Email
 import io.github.jan.supabase.auth.status.SessionStatus
