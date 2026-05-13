@@ -9,7 +9,7 @@ class BarangRepository {
     private val supabase = SupabaseClientProvider.client
     suspend fun getSemuaBarang(): List<Barang> {
         return supabase
-            .postgrest["barang"]
+            .postgrest["produk"]
             .select(
                 Columns.raw("*")
             )
