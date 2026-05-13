@@ -1,9 +1,9 @@
-package com.pos.pamt.viewmodel
+package com.example.pos_pamt.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.pos.pamt.data.Barang
-import com.pos.pamt.repository.BarangRepository
+import com.example.pos_pamt.data.Barang
+import com.example.pos_pamt.repository.BarangRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -37,10 +37,6 @@ class BarangViewModel : ViewModel() {
         }
     }
 
-    /*
-     * Dipanggil saat user mengetik di search bar.
-     * State hoisting: BarangScreen tidak menyimpan query sendiri.
-     */
     fun onSearchQueryChange(query: String) {
         _searchQuery.value = query
     }

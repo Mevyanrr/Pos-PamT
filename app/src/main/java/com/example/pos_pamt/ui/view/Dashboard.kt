@@ -81,7 +81,6 @@ fun DashboardScreen(
                     }
                 }
 
-                // Avatar
                 Box(
                     modifier          = Modifier
                         .size(46.dp)
@@ -99,7 +98,6 @@ fun DashboardScreen(
             }
         }
 
-        // ── Konten ──────────────────────────────────────────────────
         Column(
             modifier = Modifier
                 .fillMaxSize()

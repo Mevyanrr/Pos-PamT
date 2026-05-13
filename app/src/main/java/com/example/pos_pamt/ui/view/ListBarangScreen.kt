@@ -16,8 +16,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.pos.pamt.viewmodel.BarangViewModel
-import com.pos.pamt.viewmodel.DataUiState
+import com.example.pos_pamt.viewmodel.BarangViewModel
+import com.example.pos_pamt.viewmodel.DataUiState
+import com.example.pos_pamt.data.Barang
 
 private val TealPrimary = Color(0xFF00B5A3)
 private val TealLight   = Color(0xFFE0FAF7)
@@ -99,10 +100,12 @@ fun ListBarangScreen(
                     .padding(bottom = 16.dp),
                 shape         = RoundedCornerShape(12.dp),
                 singleLine    = true,
-                colors        = OutlinedTextFieldDefaults.colors(
-                    focusedBorderColor   = TealPrimary,
+                colors = OutlinedTextFieldDefaults.colors(
+                    focusedBorderColor = TealPrimary,
                     unfocusedBorderColor = TealPrimary.copy(alpha = 0.3f),
-                    containerColor       = Color.White
+                    focusedContainerColor = Color.White,
+                    unfocusedContainerColor = Color.White,
+                    disabledContainerColor = Color.White
                 )
             )
 

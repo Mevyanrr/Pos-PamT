@@ -15,9 +15,10 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.pos.pamt.data.Kas
-import com.pos.pamt.viewmodel.DataUiState
-import com.pos.pamt.viewmodel.KasViewModel
+import com.example.pos_pamt.data.Kas
+import com.example.pos_pamt.viewmodel.DataUiState
+import com.example.pos_pamt.viewmodel.KasViewModel
+import androidx.compose.foundation.background
 
 private val AdminPurple = Color(0xFF6366F1)
 private val AdminLight  = Color(0xFFEDE9FE)
@@ -27,10 +28,6 @@ private val BgPage      = Color(0xFFF2F6F8)
 private val DangerRed   = Color(0xFFEF4444)
 private val SuccessGreen = Color(0xFF14A97A)
 
-/*
- * ListKasScreen menerima KasViewModel dan callback onBackClick.
- * State diambil dari ViewModel — tidak disimpan di Composable.
- */
 @Composable
 fun ListKasScreen(
     viewModel   : KasViewModel,
@@ -44,7 +41,6 @@ fun ListKasScreen(
             .background(BgPage)
     ) {
 
-        // ── Header (warna Admin/Ungu sesuai HTML) ────────────────────
         Box(
             modifier = Modifier
                 .fillMaxWidth()
@@ -88,7 +84,6 @@ fun ListKasScreen(
             }
         }
 
-        // ── Konten ──────────────────────────────────────────────────
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -96,14 +91,9 @@ fun ListKasScreen(
                 .padding(top = 18.dp)
         ) {
 
-            /*
-             * when digunakan untuk membaca sealed class DataUiState.
-             * Setiap kondisi ditangani secara terpisah dan jelas.
-             */
             when (val state = kasState.value) {
 
                 is DataUiState.Idle -> {
-                    // State awal — tidak tampilkan apa-apa
                 }
 
                 is DataUiState.Loading -> {
@@ -160,7 +150,6 @@ fun ListKasScreen(
                     val jumlahKas  = kasList.size
                     val aktif      = kasList.count { it.isActive }
 
-                    // ── Stat Row ──────────────────────────────────────
                     Row(
                         modifier              = Modifier
                             .fillMaxWidth()
@@ -183,7 +172,6 @@ fun ListKasScreen(
                         )
                     }
 
-                    // ── Info Admin ────────────────────────────────────
                     Card(
                         modifier = Modifier
                             .fillMaxWidth()
@@ -206,7 +194,6 @@ fun ListKasScreen(
                         }
                     }
 
-                    // ── Daftar Kas ────────────────────────────────────
                     Text(
                         text     = "DAFTAR KAS",
                         fontSize = 11.sp,
@@ -257,10 +244,6 @@ fun ListKasScreen(
     }
 }
 
-/*
- * Satu baris kas dalam daftar.
- * Menampilkan ikon, nama kas, saldo, dan status aktif.
- */
 @Composable
 private fun KasRow(kas: Kas) {
     Row(
@@ -268,7 +251,6 @@ private fun KasRow(kas: Kas) {
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(12.dp)
     ) {
-        // Icon kas
         Box(
             modifier         = Modifier
                 .size(40.dp)
@@ -281,7 +263,6 @@ private fun KasRow(kas: Kas) {
             Text(text = "💵", fontSize = 18.sp)
         }
 
-        // Info kas
         Column(modifier = Modifier.weight(1f)) {
             Text(
                 text       = kas.nama,
@@ -297,7 +278,6 @@ private fun KasRow(kas: Kas) {
             )
         }
 
-        // Badge status aktif
         Surface(
             shape = RoundedCornerShape(10.dp),
             color = if (kas.isActive) Color(0xFFDCFCE7) else Color(0xFFFEE2E2)
@@ -313,9 +293,6 @@ private fun KasRow(kas: Kas) {
     }
 }
 
-/*
- * Card statistik untuk Total Kas dan Total Saldo.
- */
 @Composable
 private fun StatKasCard(
     label    : String,
@@ -354,9 +331,6 @@ private fun StatKasCard(
     }
 }
 
-/*
- * Format angka ke format Rupiah: 5098000 → Rp 5.098.000
- */
 private fun formatRupiah(amount: Long): String {
     return "Rp " + "%,d".format(amount).replace(',', '.')
 }

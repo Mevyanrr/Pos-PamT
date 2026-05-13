@@ -15,8 +15,8 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.pos.pamt.viewmodel.BarangViewModel
-import com.pos.pamt.viewmodel.KasViewModel
+import com.example.pos_pamt.viewmodel.BarangViewModel
+import com.example.pos_pamt.viewmodel.KasViewModel
 import androidx.compose.runtime.LaunchedEffect
 import com.example.pos_pamt.viewmodel.AuthCheckState
 import com.example.pos_pamt.viewmodel.AuthUiState

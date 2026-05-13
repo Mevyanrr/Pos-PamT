@@ -1,4 +1,4 @@
-package com.pos.pamt.viewmodel
+package com.example.pos_pamt.viewmodel
 
 sealed class DataUiState<out T> {
     object Idle : DataUiState<Nothing>()

@@ -1,4 +1,4 @@
-package com.pos.pamt.data
+package com.example.pos_pamt.data
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable

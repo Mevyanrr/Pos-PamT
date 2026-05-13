@@ -15,7 +15,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.pos_pamt.viewmodel.AuthUiState
 private val TealPrimary = Color(0xFF00B5A3)
-private val TealLight = Color(0xFFE0FAF7)
 private val TextDark = Color(0xFF0D2B2A)
 private val TextGray = Color(0xFF8AB5B1)
 

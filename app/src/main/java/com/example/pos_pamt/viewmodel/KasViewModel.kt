@@ -1,9 +1,9 @@
-package com.pos.pamt.viewmodel
+package com.example.pos_pamt.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.pos.pamt.data.Kas
-import com.pos.pamt.repository.KasRepository
+import com.example.pos_pamt.data.Kas
+import com.example.pos_pamt.repository.KasRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
