@@ -21,6 +21,9 @@ import com.pos.pamt.viewmodel.AuthViewModel
 import com.pos.pamt.viewmodel.BarangViewModel
 import com.pos.pamt.viewmodel.KasViewModel
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.ui.graphics.BlendMode.Companion.Screen
+import com.example.pos_pamt.viewmodel.AuthCheckState
+import com.example.pos_pamt.viewmodel.AuthViewModel
 
 @Composable
 fun AppNavigation(
