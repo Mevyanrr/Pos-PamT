@@ -16,6 +16,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.pos.pamt.viewmodel.BarangViewModel
+import com.pos.pamt.viewmodel.DataUiState
 
 private val TealPrimary = Color(0xFF00B5A3)
 private val TealLight   = Color(0xFFE0FAF7)
@@ -24,11 +26,6 @@ private val TextGray    = Color(0xFF8AB5B1)
 private val BgPage      = Color(0xFFF2F6F8)
 private val DangerRed   = Color(0xFFEF4444)
 
-/*
- * ListBarangScreen menerima BarangViewModel dan callback onBackClick.
- * State diambil dari ViewModel menggunakan collectAsStateWithLifecycle
- * — bukan disimpan langsung di Composable (state hoisting).
- */
 @Composable
 fun ListBarangScreen(
     viewModel   : BarangViewModel,
@@ -43,8 +40,6 @@ fun ListBarangScreen(
             .fillMaxSize()
             .background(BgPage)
     ) {
-
-        // ── Header ──────────────────────────────────────────────────
         Box(
             modifier = Modifier
                 .fillMaxWidth()
@@ -60,7 +55,6 @@ fun ListBarangScreen(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(12.dp)
             ) {
-                // Tombol Back
                 IconButton(
                     onClick  = onBackClick,
                     modifier = Modifier
@@ -88,7 +82,6 @@ fun ListBarangScreen(
             }
         }
 
-        // ── Konten ──────────────────────────────────────────────────
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -96,12 +89,6 @@ fun ListBarangScreen(
                 .padding(top = 18.dp)
         ) {
 
-            // ── Search Bar ───────────────────────────────────────────
-            /*
-             * value = searchQuery.value → state dari ViewModel
-             * onValueChange = viewModel::onSearchQueryChange → event ke ViewModel
-             * Search bar tidak menyimpan state sendiri.
-             */
             OutlinedTextField(
                 value         = searchQuery.value,
                 onValueChange = viewModel::onSearchQueryChange,
@@ -119,19 +106,12 @@ fun ListBarangScreen(
                 )
             )
 
-            // ── Konten berdasarkan State ─────────────────────────────
-            /*
-             * when digunakan untuk membaca sealed class DataUiState.
-             * Setiap kondisi ditangani secara eksplisit dan aman.
-             */
             when (val state = barangState.value) {
 
                 is DataUiState.Idle -> {
-                    // State awal — tidak tampilkan apa-apa
                 }
 
                 is DataUiState.Loading -> {
-                    // Tampilkan loading indicator di tengah layar
                     Box(
                         modifier         = Modifier.fillMaxSize(),
                         contentAlignment = Alignment.Center
@@ -149,7 +129,6 @@ fun ListBarangScreen(
                 }
 
                 is DataUiState.Error -> {
-                    // Tampilkan pesan error dan tombol coba lagi
                     Box(
                         modifier         = Modifier.fillMaxSize(),
                         contentAlignment = Alignment.Center
@@ -181,16 +160,13 @@ fun ListBarangScreen(
                 }
 
                 is DataUiState.Success -> {
-                    // Filter berdasarkan search query
                     val filtered = state.data.filter { barang ->
                         barang.nama.contains(searchQuery.value, ignoreCase = true) ||
                                 barang.kategori.contains(searchQuery.value, ignoreCase = true)
                     }
 
-                    // Info stok menipis (stok < 10)
                     val stokMenipis = filtered.count { it.stok < 10 }
 
-                    // ── Stat Row ─────────────────────────────────────
                     Row(
                         modifier              = Modifier
                             .fillMaxWidth()
@@ -215,7 +191,6 @@ fun ListBarangScreen(
                         )
                     }
 
-                    // ── Info Kasir ────────────────────────────────────
                     Card(
                         modifier = Modifier
                             .fillMaxWidth()
@@ -238,7 +213,6 @@ fun ListBarangScreen(
                         }
                     }
 
-                    // ── Daftar Barang ─────────────────────────────────
                     if (filtered.isEmpty()) {
                         Box(
                             modifier         = Modifier.fillMaxSize(),
@@ -280,11 +254,6 @@ fun ListBarangScreen(
     }
 }
 
-/*
- * Satu baris produk dalam daftar barang.
- * Menampilkan nama, stok, kategori, harga.
- * Stok menipis (< 10) ditandai warna merah.
- */
 @Composable
 private fun BarangRow(barang: Barang) {
     Row(
@@ -292,7 +261,6 @@ private fun BarangRow(barang: Barang) {
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(12.dp)
     ) {
-        // Icon kategori (emoji sederhana berdasarkan kategori)
         Box(
             modifier         = Modifier
                 .size(42.dp)
@@ -306,7 +274,6 @@ private fun BarangRow(barang: Barang) {
             )
         }
 
-        // Info produk
         Column(modifier = Modifier.weight(1f)) {
             Text(
                 text       = barang.nama,
@@ -314,7 +281,6 @@ private fun BarangRow(barang: Barang) {
                 fontWeight = FontWeight.SemiBold,
                 color      = TextDark
             )
-            // Stok menipis jika < 10
             if (barang.stok < 10) {
                 Row(
                     verticalAlignment  = Alignment.CenterVertically,
@@ -339,7 +305,6 @@ private fun BarangRow(barang: Barang) {
             }
         }
 
-        // Harga
         Text(
             text       = "Rp ${"%,d".format(barang.harga).replace(',', '.')}",
             fontSize   = 13.sp,
@@ -349,10 +314,6 @@ private fun BarangRow(barang: Barang) {
     }
 }
 
-/*
- * Menentukan emoji berdasarkan nama kategori.
- * Sesuaikan dengan kategori di tabel Supabase Anda.
- */
 private fun emojiKategori(kategori: String): String {
     return when (kategori.lowercase()) {
         "obat"       -> "💊"
@@ -363,9 +324,6 @@ private fun emojiKategori(kategori: String): String {
     }
 }
 
-/*
- * Card statistik kecil — dipakai untuk Total SKU dan Stok Menipis.
- */
 @Composable
 private fun StatMiniCard(
     label          : String,
