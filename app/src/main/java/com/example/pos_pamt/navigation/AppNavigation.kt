@@ -11,18 +11,12 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.pos.pamt.ui.DashboardScreen
-import com.pos.pamt.ui.ListBarangScreen
-import com.pos.pamt.ui.ListKasScreen
-import com.pos.pamt.ui.LoginScreen
-import com.pos.pamt.viewmodel.AuthCheckState
-import com.pos.pamt.viewmodel.AuthUiState
-import com.pos.pamt.viewmodel.AuthViewModel
 import com.pos.pamt.viewmodel.BarangViewModel
 import com.pos.pamt.viewmodel.KasViewModel
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.graphics.BlendMode.Companion.Screen
 import com.example.pos_pamt.viewmodel.AuthCheckState
+import com.example.pos_pamt.viewmodel.AuthUiState
 import com.example.pos_pamt.viewmodel.AuthViewModel
 
 @Composable

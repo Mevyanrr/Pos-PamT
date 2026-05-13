@@ -1,22 +1,7 @@
-// ============================================================
-// File: data/Models.kt
-// Model data untuk tabel barang dan kas di Supabase
-// ============================================================
 package com.pos.pamt.data
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
-
-/*
- * @Serializable diperlukan agar Supabase bisa otomatis
- * mengubah JSON response menjadi object Kotlin (dan sebaliknya).
- *
- * @SerialName("nama_kolom") digunakan jika nama variabel Kotlin
- * berbeda dengan nama kolom di tabel Supabase.
- *
- * Sesuaikan nama kolom (@SerialName) dengan nama kolom
- * di tabel Supabase project Anda.
- */
 
 @Serializable
 data class Barang(
