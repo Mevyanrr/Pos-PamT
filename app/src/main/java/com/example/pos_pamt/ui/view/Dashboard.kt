@@ -35,7 +35,6 @@ fun DashboardScreen(
             .background(BgPage)
     ) {
 
-        // ── Header Gradient ─────────────────────────────────────────
         Box(
             modifier = Modifier
                 .fillMaxWidth()
