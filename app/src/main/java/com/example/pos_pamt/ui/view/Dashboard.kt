@@ -27,8 +27,9 @@ private val BgPage      = Color(0xFFF2F6F8)
 fun DashboardScreen(
     onLogoutClick      : () -> Unit,
     onNavigateToBarang : () -> Unit,
-    onNavigateToKas    : () -> Unit
-) {
+    onNavigateToKas    : () -> Unit,
+    onNavigateToPelanggan  : () -> Unit,
+    ) {
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -112,7 +113,6 @@ fun DashboardScreen(
                 modifier   = Modifier.padding(bottom = 12.dp)
             )
 
-            // ── Menu Card: List Barang ───────────────────────────────
             MenuCard(
                 icon        = "📦",
                 iconBg      = TealLight,
@@ -123,7 +123,6 @@ fun DashboardScreen(
 
             Spacer(modifier = Modifier.height(12.dp))
 
-            // ── Menu Card: List Kas ──────────────────────────────────
             MenuCard(
                 icon        = "💰",
                 iconBg      = Color(0xFFFEF3C7),
@@ -132,13 +131,16 @@ fun DashboardScreen(
                 onClick     = onNavigateToKas
             )
 
+            MenuCard(
+                icon     = "👤",
+                iconBg   = Color(0xFFEFF6FF),
+                title    = "List Pelanggan",
+                subtitle = "Lihat daftar pelanggan terdaftar",
+                onClick  = onNavigateToPelanggan
+            )
+
             Spacer(modifier = Modifier.weight(1f))
 
-            // ── Tombol Logout ────────────────────────────────────────
-            /*
-             * Logout hanya memanggil callback onLogoutClick.
-             * Logic logout (repository.logout + navigasi) ada di AppNavigation.
-             */
             OutlinedButton(
                 onClick  = onLogoutClick,
                 modifier = Modifier
@@ -159,10 +161,6 @@ fun DashboardScreen(
     }
 }
 
-/*
- * Komponen card menu — dipakai berulang untuk setiap menu.
- * Dibuat terpisah agar tidak ada duplikasi kode.
- */
 @Composable
 private fun MenuCard(
     icon     : String,

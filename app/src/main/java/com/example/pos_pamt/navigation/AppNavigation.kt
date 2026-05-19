@@ -21,6 +21,8 @@ import androidx.compose.runtime.LaunchedEffect
 import com.example.pos_pamt.viewmodel.AuthCheckState
 import com.example.pos_pamt.viewmodel.AuthUiState
 import com.example.pos_pamt.viewmodel.AuthViewModel
+import com.example.pos_pamt.ui.view.ListPelangganScreen
+import com.example.pos_pamt.viewmodel.PelangganViewModel
 
 @Composable
 fun AppNavigation(
@@ -102,6 +104,10 @@ fun MainNavHost(
                 onNavigateToKas = {
                     navController.navigate(Screen.Kas.route)
                 }
+                ,
+                onNavigateToPelanggan = {
+                    navController.navigate(Screen.Pelanggan.route)
+                }
             )
         }
 
@@ -117,6 +123,14 @@ fun MainNavHost(
             val kasViewModel: KasViewModel = viewModel()
             ListKasScreen(
                 viewModel  = kasViewModel,
+                onBackClick = { navController.popBackStack() }
+            )
+        }
+
+        composable(Screen.Pelanggan.route) {
+            val pelangganViewModel: PelangganViewModel = viewModel()
+            ListPelangganScreen(
+                viewModel   = pelangganViewModel,
                 onBackClick = { navController.popBackStack() }
             )
         }
