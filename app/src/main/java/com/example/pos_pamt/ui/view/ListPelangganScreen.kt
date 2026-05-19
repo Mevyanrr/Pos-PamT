@@ -101,11 +101,6 @@ fun ListPelangganScreen(
                     .padding(bottom = 16.dp),
                 shape = RoundedCornerShape(12.dp),
                 singleLine = true,
-                colors = OutlinedTextFieldDefaults.colors(
-                    focusedBorderColor = BluePrimary,
-                    unfocusedBorderColor = BluePrimary.copy(alpha = 0.3f),
-                    containerColor = Color.White
-                )
             )
 
             when (val state = pelangganState.value) {
