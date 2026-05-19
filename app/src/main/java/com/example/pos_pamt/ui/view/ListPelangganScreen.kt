@@ -21,21 +21,21 @@ import com.example.pos_pamt.data.Pelanggan
 import com.example.pos_pamt.viewmodel.DataUiState
 import com.example.pos_pamt.viewmodel.PelangganViewModel
 
-private val BluePrimary  = Color(0xFF3B82F6)
-private val BlueLight    = Color(0xFFEFF6FF)
-private val TextDark     = Color(0xFF0D2B2A)
-private val TextGray     = Color(0xFF8AB5B1)
-private val BgPage       = Color(0xFFF2F6F8)
+private val BluePrimary = Color(0xFF3B82F6)
+private val BlueLight = Color(0xFFEFF6FF)
+private val TextDark = Color(0xFF0D2B2A)
+private val TextGray = Color(0xFF8AB5B1)
+private val BgPage = Color(0xFFF2F6F8)
 private val SuccessGreen = Color(0xFF16A34A)
-private val DangerRed    = Color(0xFFEF4444)
+private val DangerRed = Color(0xFFEF4444)
 
 @Composable
 fun ListPelangganScreen(
-    viewModel   : PelangganViewModel,
+    viewModel : PelangganViewModel,
     onBackClick : () -> Unit
 ) {
     val pelangganState = viewModel.pelangganState.collectAsStateWithLifecycle()
-    val searchQuery    = viewModel.searchQuery.collectAsStateWithLifecycle()
+    val searchQuery = viewModel.searchQuery.collectAsStateWithLifecycle()
 
     Column(
         modifier = Modifier
@@ -55,11 +55,11 @@ fun ListPelangganScreen(
                 .padding(top = 48.dp, bottom = 20.dp)
         ) {
             Row(
-                verticalAlignment     = Alignment.CenterVertically,
+                verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(12.dp)
             ) {
                 IconButton(
-                    onClick  = onBackClick,
+                    onClick = onBackClick,
                     modifier = Modifier
                         .size(40.dp)
                         .clip(RoundedCornerShape(10.dp))
@@ -69,16 +69,16 @@ fun ListPelangganScreen(
                 }
                 Column {
                     Text(
-                        text      = "Master Data",
-                        fontSize  = 11.sp,
-                        color     = Color.White.copy(alpha = 0.7f),
+                        text = "Master Data",
+                        fontSize = 11.sp,
+                        color = Color.White.copy(alpha = 0.7f),
                         letterSpacing = 0.7.sp
                     )
                     Text(
-                        text       = "Pelanggan",
-                        fontSize   = 20.sp,
+                        text = "Pelanggan",
+                        fontSize = 20.sp,
                         fontWeight = FontWeight.Bold,
-                        color      = Color.White
+                        color = Color.White
                     )
                 }
             }

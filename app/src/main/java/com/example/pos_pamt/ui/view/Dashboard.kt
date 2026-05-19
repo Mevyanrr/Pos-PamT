@@ -18,17 +18,17 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
 private val TealPrimary = Color(0xFF00B5A3)
-private val TealLight   = Color(0xFFE0FAF7)
-private val TextDark    = Color(0xFF0D2B2A)
-private val TextGray    = Color(0xFF8AB5B1)
-private val BgPage      = Color(0xFFF2F6F8)
+private val TealLight = Color(0xFFE0FAF7)
+private val TextDark = Color(0xFF0D2B2A)
+private val TextGray = Color(0xFF8AB5B1)
+private val BgPage = Color(0xFFF2F6F8)
 
 @Composable
 fun DashboardScreen(
-    onLogoutClick      : () -> Unit,
+    onLogoutClick : () -> Unit,
     onNavigateToBarang : () -> Unit,
-    onNavigateToKas    : () -> Unit,
-    onNavigateToPelanggan  : () -> Unit,
+    onNavigateToKas : () -> Unit,
+    onNavigateToPelanggan : () -> Unit,
     ) {
     Column(
         modifier = Modifier
@@ -48,51 +48,50 @@ fun DashboardScreen(
                 .padding(top = 48.dp, bottom = 24.dp)
         ) {
             Row(
-                modifier            = Modifier.fillMaxWidth(),
+                modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment   = Alignment.Top
+                verticalAlignment = Alignment.Top
             ) {
                 Column {
                     Text(
-                        text     = "Selamat datang",
+                        text = "Selamat datang",
                         fontSize = 12.sp,
-                        color    = Color.White.copy(alpha = 0.75f),
+                        color = Color.White.copy(alpha = 0.75f),
                         letterSpacing = 0.6.sp
                     )
                     Text(
-                        text       = "PAMT Kasir",
-                        fontSize   = 20.sp,
+                        text = "PAMT Kasir",
+                        fontSize = 20.sp,
                         fontWeight = FontWeight.Bold,
-                        color      = Color.White
+                        color = Color.White
                     )
-                    // Badge role
                     Surface(
                         modifier = Modifier.padding(top = 8.dp),
-                        shape    = RoundedCornerShape(20.dp),
-                        color    = Color.White.copy(alpha = 0.2f)
+                        shape = RoundedCornerShape(20.dp),
+                        color = Color.White.copy(alpha = 0.2f)
                     ) {
                         Text(
-                            text       = "Kasir",
-                            fontSize   = 11.sp,
+                            text = "Kasir",
+                            fontSize = 11.sp,
                             fontWeight = FontWeight.SemiBold,
-                            color      = Color.White,
-                            modifier   = Modifier.padding(horizontal = 12.dp, vertical = 4.dp)
+                            color = Color.White,
+                            modifier = Modifier.padding(horizontal = 12.dp, vertical = 4.dp)
                         )
                     }
                 }
 
                 Box(
-                    modifier          = Modifier
+                    modifier = Modifier
                         .size(46.dp)
                         .clip(CircleShape)
                         .background(Color.White.copy(alpha = 0.25f)),
-                    contentAlignment  = Alignment.Center
+                    contentAlignment = Alignment.Center
                 ) {
                     Text(
-                        text       = "K",
-                        fontSize   = 18.sp,
+                        text = "K",
+                        fontSize = 18.sp,
                         fontWeight = FontWeight.Bold,
-                        color      = Color.White
+                        color = Color.White
                     )
                 }
             }
@@ -105,55 +104,59 @@ fun DashboardScreen(
         ) {
 
             Text(
-                text       = "MENU UTAMA",
-                fontSize   = 11.sp,
+                text = "MENU UTAMA",
+                fontSize = 11.sp,
                 fontWeight = FontWeight.SemiBold,
-                color      = TextGray,
+                color = TextGray,
                 letterSpacing = 0.8.sp,
-                modifier   = Modifier.padding(bottom = 12.dp)
+                modifier = Modifier.padding(bottom = 12.dp)
             )
 
             MenuCard(
-                icon        = "📦",
-                iconBg      = TealLight,
-                title       = "List Barang",
-                subtitle    = "Lihat daftar produk & stok",
-                onClick     = onNavigateToBarang
+                icon = "📦",
+                iconBg = TealLight,
+                title = "List Barang",
+                subtitle = "Lihat daftar produk & stok",
+                onClick = onNavigateToBarang
             )
 
             Spacer(modifier = Modifier.height(12.dp))
 
             MenuCard(
-                icon        = "💰",
-                iconBg      = Color(0xFFFEF3C7),
-                title       = "List Kas",
-                subtitle    = "Lihat daftar kas & saldo",
-                onClick     = onNavigateToKas
+                icon = "💰",
+                iconBg = Color(0xFFFEF3C7),
+                title = "List Kas",
+                subtitle = "Lihat daftar kas & saldo",
+                onClick = onNavigateToKas
             )
+
+            Spacer(modifier = Modifier.height(12.dp))
 
             MenuCard(
-                icon     = "👤",
-                iconBg   = Color(0xFFEFF6FF),
-                title    = "List Pelanggan",
+                icon = "👤",
+                iconBg = Color(0xFFEFF6FF),
+                title = "List Pelanggan",
                 subtitle = "Lihat daftar pelanggan terdaftar",
-                onClick  = onNavigateToPelanggan
+                onClick = onNavigateToPelanggan
             )
 
-            Spacer(modifier = Modifier.weight(1f))
+            Spacer(modifier = Modifier.height(12.dp))
+
+            Spacer(modifier = Modifier.height(24.dp))
 
             OutlinedButton(
-                onClick  = onLogoutClick,
+                onClick = onLogoutClick,
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(50.dp),
-                shape    = RoundedCornerShape(12.dp),
-                colors   = ButtonDefaults.outlinedButtonColors(
+                shape = RoundedCornerShape(12.dp),
+                colors = ButtonDefaults.outlinedButtonColors(
                     contentColor = Color(0xFFEF4444)
                 )
             ) {
                 Text(
-                    text       = "Keluar",
-                    fontSize   = 14.sp,
+                    text = "Keluar",
+                    fontSize = 14.sp,
                     fontWeight = FontWeight.SemiBold
                 )
             }
@@ -163,28 +166,27 @@ fun DashboardScreen(
 
 @Composable
 private fun MenuCard(
-    icon     : String,
-    iconBg   : Color,
-    title    : String,
+    icon : String,
+    iconBg : Color,
+    title : String,
     subtitle : String,
-    onClick  : () -> Unit
+    onClick : () -> Unit
 ) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
             .clickable { onClick() },
-        shape    = RoundedCornerShape(16.dp),
-        colors   = CardDefaults.cardColors(containerColor = Color.White),
+        shape = RoundedCornerShape(16.dp),
+        colors = CardDefaults.cardColors(containerColor = Color.White),
         elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
     ) {
         Row(
-            modifier          = Modifier.padding(16.dp),
+            modifier = Modifier.padding(16.dp),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(14.dp)
         ) {
-            // Icon
             Box(
-                modifier         = Modifier
+                modifier = Modifier
                     .size(46.dp)
                     .clip(RoundedCornerShape(12.dp))
                     .background(iconBg),
@@ -193,23 +195,21 @@ private fun MenuCard(
                 Text(text = icon, fontSize = 22.sp)
             }
 
-            // Teks
             Column(modifier = Modifier.weight(1f)) {
                 Text(
-                    text       = title,
-                    fontSize   = 14.sp,
+                    text = title,
+                    fontSize = 14.sp,
                     fontWeight = FontWeight.Bold,
-                    color      = TextDark
+                    color = TextDark
                 )
                 Text(
-                    text     = subtitle,
+                    text = subtitle,
                     fontSize = 12.sp,
-                    color    = TextGray,
+                    color = TextGray,
                     modifier = Modifier.padding(top = 2.dp)
                 )
             }
 
-            // Panah
             Text(text = "›", fontSize = 22.sp, color = TextGray)
         }
     }
