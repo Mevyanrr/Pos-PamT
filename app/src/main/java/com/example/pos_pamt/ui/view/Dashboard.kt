@@ -142,7 +142,7 @@ fun DashboardScreen(
 
             Spacer(modifier = Modifier.height(12.dp))
 
-            Spacer(modifier = Modifier.height(24.dp))
+            Spacer(modifier = Modifier.weight(1f))
 
             OutlinedButton(
                 onClick = onLogoutClick,
