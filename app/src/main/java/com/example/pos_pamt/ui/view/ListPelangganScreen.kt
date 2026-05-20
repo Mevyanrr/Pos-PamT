@@ -6,6 +6,11 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.outlined.ArrowBack
+import androidx.compose.material.icons.outlined.PersonOff
+import androidx.compose.material.icons.outlined.Search
+import androidx.compose.material.icons.outlined.Warning
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -21,28 +26,27 @@ import com.example.pos_pamt.data.Pelanggan
 import com.example.pos_pamt.viewmodel.DataUiState
 import com.example.pos_pamt.viewmodel.PelangganViewModel
 
-private val BluePrimary = Color(0xFF3B82F6)
-private val BlueLight = Color(0xFFEFF6FF)
-private val TextDark = Color(0xFF0D2B2A)
-private val TextGray = Color(0xFF8AB5B1)
-private val BgPage = Color(0xFFF2F6F8)
+private val BluePrimary  = Color(0xFF3B82F6)
+private val BlueLight    = Color(0xFFEFF6FF)
+private val TextDark     = Color(0xFF0D2B2A)
+private val TextGray     = Color(0xFF8AB5B1)
+private val BgPage       = Color(0xFFF2F6F8)
 private val SuccessGreen = Color(0xFF16A34A)
-private val DangerRed = Color(0xFFEF4444)
+private val DangerRed    = Color(0xFFEF4444)
 
 @Composable
 fun ListPelangganScreen(
-    viewModel : PelangganViewModel,
+    viewModel   : PelangganViewModel,
     onBackClick : () -> Unit
 ) {
     val pelangganState = viewModel.pelangganState.collectAsStateWithLifecycle()
-    val searchQuery = viewModel.searchQuery.collectAsStateWithLifecycle()
+    val searchQuery    = viewModel.searchQuery.collectAsStateWithLifecycle()
 
     Column(
         modifier = Modifier
             .fillMaxSize()
             .background(BgPage)
     ) {
-
         Box(
             modifier = Modifier
                 .fillMaxWidth()
@@ -55,30 +59,35 @@ fun ListPelangganScreen(
                 .padding(top = 48.dp, bottom = 20.dp)
         ) {
             Row(
-                verticalAlignment = Alignment.CenterVertically,
+                verticalAlignment     = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(12.dp)
             ) {
                 IconButton(
-                    onClick = onBackClick,
+                    onClick  = onBackClick,
                     modifier = Modifier
                         .size(40.dp)
                         .clip(RoundedCornerShape(10.dp))
                         .background(Color.White.copy(alpha = 0.2f))
                 ) {
-                    Text(text = "←", fontSize = 18.sp, color = Color.White)
+                    Icon(
+                        imageVector        = Icons.AutoMirrored.Outlined.ArrowBack,
+                        contentDescription = "Kembali",
+                        tint               = Color.White,
+                        modifier           = Modifier.size(20.dp)
+                    )
                 }
                 Column {
                     Text(
-                        text = "Master Data",
-                        fontSize = 11.sp,
-                        color = Color.White.copy(alpha = 0.7f),
+                        text          = "Master Data",
+                        fontSize      = 11.sp,
+                        color         = Color.White.copy(alpha = 0.7f),
                         letterSpacing = 0.7.sp
                     )
                     Text(
-                        text = "Pelanggan",
-                        fontSize = 20.sp,
+                        text       = "Pelanggan",
+                        fontSize   = 20.sp,
                         fontWeight = FontWeight.Bold,
-                        color = Color.White
+                        color      = Color.White
                     )
                 }
             }
@@ -90,33 +99,45 @@ fun ListPelangganScreen(
                 .padding(horizontal = 20.dp)
                 .padding(top = 18.dp)
         ) {
-
             OutlinedTextField(
-                value = searchQuery.value,
+                value         = searchQuery.value,
                 onValueChange = viewModel::onSearchQueryChange,
-                placeholder = { Text("Cari nama / no. telp…", color = TextGray) },
-                leadingIcon = { Text("🔍", fontSize = 16.sp) },
-                modifier = Modifier
+                placeholder   = { Text("Cari nama / no. telp…", color = TextGray) },
+                leadingIcon   = {
+                    Icon(
+                        imageVector        = Icons.Outlined.Search,
+                        contentDescription = null,
+                        tint               = TextGray,
+                        modifier           = Modifier.size(20.dp)
+                    )
+                },
+                modifier   = Modifier
                     .fillMaxWidth()
                     .padding(bottom = 16.dp),
-                shape = RoundedCornerShape(12.dp),
+                shape      = RoundedCornerShape(12.dp),
                 singleLine = true,
+                colors     = OutlinedTextFieldDefaults.colors(
+                    focusedBorderColor      = BluePrimary,
+                    unfocusedBorderColor    = BluePrimary.copy(alpha = 0.3f),
+                    focusedContainerColor   = Color.White,
+                    unfocusedContainerColor = Color.White
+                )
             )
 
             when (val state = pelangganState.value) {
                 is DataUiState.Idle -> {}
                 is DataUiState.Loading -> {
                     Box(
-                        modifier = Modifier.fillMaxSize(),
+                        modifier         = Modifier.fillMaxSize(),
                         contentAlignment = Alignment.Center
                     ) {
                         Column(horizontalAlignment = Alignment.CenterHorizontally) {
                             CircularProgressIndicator(color = BluePrimary)
                             Spacer(modifier = Modifier.height(12.dp))
                             Text(
-                                text = "Memuat data pelanggan…",
+                                text     = "Memuat data pelanggan…",
                                 fontSize = 13.sp,
-                                color = TextGray
+                                color    = TextGray
                             )
                         }
                     }
@@ -124,19 +145,24 @@ fun ListPelangganScreen(
 
                 is DataUiState.Error -> {
                     Box(
-                        modifier = Modifier.fillMaxSize(),
+                        modifier         = Modifier.fillMaxSize(),
                         contentAlignment = Alignment.Center
                     ) {
                         Column(
                             horizontalAlignment = Alignment.CenterHorizontally,
-                            modifier = Modifier.padding(24.dp)
+                            modifier            = Modifier.padding(24.dp)
                         ) {
-                            Text(text = "⚠️", fontSize = 40.sp)
+                            Icon(
+                                imageVector        = Icons.Outlined.Warning,
+                                contentDescription = null,
+                                tint               = DangerRed,
+                                modifier           = Modifier.size(48.dp)
+                            )
                             Spacer(modifier = Modifier.height(12.dp))
                             Text(
-                                text = state.message,
-                                fontSize = 13.sp,
-                                color = DangerRed,
+                                text       = state.message,
+                                fontSize   = 13.sp,
+                                color      = DangerRed,
                                 fontWeight = FontWeight.SemiBold
                             )
                             Spacer(modifier = Modifier.height(16.dp))
@@ -159,22 +185,23 @@ fun ListPelangganScreen(
                                 p.noTelp.contains(searchQuery.value, ignoreCase = true)
                     }
                     val totalAktif = filtered.count { it.isActive }
+
                     Row(
-                        modifier = Modifier
+                        modifier              = Modifier
                             .fillMaxWidth()
                             .padding(bottom = 14.dp),
                         horizontalArrangement = Arrangement.spacedBy(10.dp)
                     ) {
                         StatPelangganCard(
-                            label = "Total Pelanggan",
-                            value = "${filtered.size}",
+                            label    = "Total Pelanggan",
+                            value    = "${filtered.size}",
                             subLabel = "terdaftar",
                             subColor = TextGray,
                             modifier = Modifier.weight(1f)
                         )
                         StatPelangganCard(
-                            label = "Aktif",
-                            value = "$totalAktif",
+                            label    = "Aktif",
+                            value    = "$totalAktif",
                             subLabel = "pelanggan aktif",
                             subColor = SuccessGreen,
                             modifier = Modifier.weight(1f)
@@ -183,26 +210,31 @@ fun ListPelangganScreen(
 
                     if (filtered.isEmpty()) {
                         Box(
-                            modifier = Modifier
+                            modifier         = Modifier
                                 .fillMaxWidth()
                                 .padding(32.dp),
                             contentAlignment = Alignment.Center
                         ) {
                             Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                                Text(text = "👤", fontSize = 40.sp)
+                                Icon(
+                                    imageVector        = Icons.Outlined.PersonOff,
+                                    contentDescription = null,
+                                    tint               = TextGray,
+                                    modifier           = Modifier.size(48.dp)
+                                )
                                 Spacer(modifier = Modifier.height(10.dp))
                                 Text(
-                                    text = "Pelanggan tidak ditemukan",
+                                    text     = "Pelanggan tidak ditemukan",
                                     fontSize = 13.sp,
-                                    color = TextGray
+                                    color    = TextGray
                                 )
                             }
                         }
                     } else {
                         Card(
-                            modifier = Modifier.fillMaxWidth(),
-                            shape = RoundedCornerShape(16.dp),
-                            colors = CardDefaults.cardColors(containerColor = Color.White),
+                            modifier  = Modifier.fillMaxWidth(),
+                            shape     = RoundedCornerShape(16.dp),
+                            colors    = CardDefaults.cardColors(containerColor = Color.White),
                             elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
                         ) {
                             LazyColumn {
@@ -227,36 +259,36 @@ fun ListPelangganScreen(
 @Composable
 private fun PelangganRow(pelanggan: Pelanggan) {
     Row(
-        modifier = Modifier.padding(horizontal = 16.dp, vertical = 12.dp),
-        verticalAlignment = Alignment.CenterVertically,
+        modifier              = Modifier.padding(horizontal = 16.dp, vertical = 12.dp),
+        verticalAlignment     = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(12.dp)
     ) {
         Box(
-            modifier = Modifier
+            modifier         = Modifier
                 .size(42.dp)
                 .clip(CircleShape)
                 .background(BlueLight),
             contentAlignment = Alignment.Center
         ) {
             Text(
-                text = pelanggan.nama.take(1).uppercase(),
-                fontSize = 16.sp,
+                text       = pelanggan.nama.take(1).uppercase(),
+                fontSize   = 16.sp,
                 fontWeight = FontWeight.Bold,
-                color = BluePrimary
+                color      = BluePrimary
             )
         }
 
         Column(modifier = Modifier.weight(1f)) {
             Text(
-                text = pelanggan.nama,
-                fontSize = 13.sp,
+                text       = pelanggan.nama,
+                fontSize   = 13.sp,
                 fontWeight = FontWeight.SemiBold,
-                color = TextDark
+                color      = TextDark
             )
             Text(
-                text = if (pelanggan.noTelp.isNotEmpty()) pelanggan.noTelp else "Tidak ada no. telp",
+                text     = if (pelanggan.noTelp.isNotEmpty()) pelanggan.noTelp else "Tidak ada no. telp",
                 fontSize = 11.sp,
-                color = TextGray,
+                color    = TextGray,
                 modifier = Modifier.padding(top = 2.dp)
             )
         }
@@ -266,11 +298,11 @@ private fun PelangganRow(pelanggan: Pelanggan) {
             color = if (pelanggan.isActive) Color(0xFFDCFCE7) else Color(0xFFFEE2E2)
         ) {
             Text(
-                text = if (pelanggan.isActive) "Aktif" else "Nonaktif",
-                fontSize = 10.sp,
+                text       = if (pelanggan.isActive) "Aktif" else "Nonaktif",
+                fontSize   = 10.sp,
                 fontWeight = FontWeight.SemiBold,
-                color = if (pelanggan.isActive) SuccessGreen else DangerRed,
-                modifier = Modifier.padding(horizontal = 8.dp, vertical = 3.dp)
+                color      = if (pelanggan.isActive) SuccessGreen else DangerRed,
+                modifier   = Modifier.padding(horizontal = 8.dp, vertical = 3.dp)
             )
         }
     }
@@ -278,36 +310,36 @@ private fun PelangganRow(pelanggan: Pelanggan) {
 
 @Composable
 private fun StatPelangganCard(
-    label : String,
-    value : String,
+    label    : String,
+    value    : String,
     subLabel : String,
     subColor : Color,
     modifier : Modifier = Modifier
 ) {
     Card(
-        modifier = modifier,
-        shape = RoundedCornerShape(12.dp),
-        colors = CardDefaults.cardColors(containerColor = Color.White),
+        modifier  = modifier,
+        shape     = RoundedCornerShape(12.dp),
+        colors    = CardDefaults.cardColors(containerColor = Color.White),
         elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
     ) {
         Column(modifier = Modifier.padding(14.dp)) {
             Text(
-                text = label,
-                fontSize = 10.sp,
-                color = TextGray,
+                text          = label,
+                fontSize      = 10.sp,
+                color         = TextGray,
                 letterSpacing = 0.6.sp
             )
             Text(
-                text = value,
-                fontSize = 21.sp,
+                text       = value,
+                fontSize   = 21.sp,
                 fontWeight = FontWeight.Bold,
-                color = TextDark,
-                modifier = Modifier.padding(top = 4.dp)
+                color      = TextDark,
+                modifier   = Modifier.padding(top = 4.dp)
             )
             Text(
-                text = subLabel,
+                text     = subLabel,
                 fontSize = 10.sp,
-                color = subColor,
+                color    = subColor,
                 modifier = Modifier.padding(top = 3.dp)
             )
         }

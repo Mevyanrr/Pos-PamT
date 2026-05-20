@@ -5,6 +5,12 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.outlined.ArrowBack
+import androidx.compose.material.icons.outlined.Inventory2
+import androidx.compose.material.icons.outlined.Search
+import androidx.compose.material.icons.outlined.Warning
+import androidx.compose.material.icons.outlined.WarningAmber
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -16,9 +22,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.example.pos_pamt.data.Barang
 import com.example.pos_pamt.viewmodel.BarangViewModel
 import com.example.pos_pamt.viewmodel.DataUiState
-import com.example.pos_pamt.data.Barang
 
 private val TealPrimary = Color(0xFF00B5A3)
 private val TealLight   = Color(0xFFE0FAF7)
@@ -62,7 +68,12 @@ fun ListBarangScreen(
                         .clip(RoundedCornerShape(10.dp))
                         .background(Color.White.copy(alpha = 0.2f))
                 ) {
-                    Text(text = "←", fontSize = 18.sp, color = Color.White)
+                    Icon(
+                        imageVector        = Icons.AutoMirrored.Outlined.ArrowBack,
+                        contentDescription = "Kembali",
+                        tint               = Color.White,
+                        modifier           = Modifier.size(20.dp)
+                    )
                 }
 
                 Column {
@@ -92,8 +103,15 @@ fun ListBarangScreen(
                 value         = searchQuery.value,
                 onValueChange = viewModel::onSearchQueryChange,
                 placeholder   = { Text("Cari produk…", color = TextGray) },
-                leadingIcon   = { Text("🔍", fontSize = 16.sp) },
-                modifier      = Modifier
+                leadingIcon   = {
+                    Icon(
+                        imageVector        = Icons.Outlined.Search,
+                        contentDescription = null,
+                        tint               = TextGray,
+                        modifier           = Modifier.size(20.dp)
+                    )
+                },
+                modifier   = Modifier
                     .fillMaxWidth()
                     .padding(bottom = 16.dp),
                 shape      = RoundedCornerShape(12.dp),
@@ -108,9 +126,7 @@ fun ListBarangScreen(
             )
 
             when (val state = barangState.value) {
-
                 is DataUiState.Idle -> {}
-
                 is DataUiState.Loading -> {
                     Box(
                         modifier         = Modifier.fillMaxSize(),
@@ -137,7 +153,12 @@ fun ListBarangScreen(
                             horizontalAlignment = Alignment.CenterHorizontally,
                             modifier            = Modifier.padding(24.dp)
                         ) {
-                            Text(text = "⚠️", fontSize = 40.sp)
+                            Icon(
+                                imageVector        = Icons.Outlined.Warning,
+                                contentDescription = null,
+                                tint               = DangerRed,
+                                modifier           = Modifier.size(48.dp)
+                            )
                             Spacer(modifier = Modifier.height(12.dp))
                             Text(
                                 text       = state.message,
@@ -196,7 +217,12 @@ fun ListBarangScreen(
                             contentAlignment = Alignment.Center
                         ) {
                             Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                                Text(text = "📦", fontSize = 40.sp)
+                                Icon(
+                                    imageVector        = Icons.Outlined.Inventory2,
+                                    contentDescription = null,
+                                    tint               = TextGray,
+                                    modifier           = Modifier.size(48.dp)
+                                )
                                 Spacer(modifier = Modifier.height(10.dp))
                                 Text(
                                     text     = "Produk tidak ditemukan",
@@ -245,7 +271,12 @@ private fun BarangRow(barang: Barang) {
                 .background(TealLight),
             contentAlignment = Alignment.Center
         ) {
-            Text(text = "📦", fontSize = 20.sp)
+            Icon(
+                imageVector        = Icons.Outlined.Inventory2,
+                contentDescription = null,
+                tint               = TealPrimary,
+                modifier           = Modifier.size(22.dp)
+            )
         }
 
         Column(modifier = Modifier.weight(1f)) {
@@ -261,7 +292,12 @@ private fun BarangRow(barang: Barang) {
                     horizontalArrangement = Arrangement.spacedBy(4.dp),
                     modifier              = Modifier.padding(top = 2.dp)
                 ) {
-                    Text(text = "⚠️", fontSize = 10.sp)
+                    Icon(
+                        imageVector        = Icons.Outlined.WarningAmber,
+                        contentDescription = null,
+                        tint               = DangerRed,
+                        modifier           = Modifier.size(12.dp)
+                    )
                     Text(
                         text       = "Stok: ${barang.stok.toInt()} pcs · menipis!",
                         fontSize   = 11.sp,

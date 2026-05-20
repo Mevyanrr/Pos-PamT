@@ -1,11 +1,16 @@
 package com.example.pos_pamt.ui.view
 
-
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.Inventory2
+import androidx.compose.material.icons.outlined.AccountBalanceWallet
+import androidx.compose.material.icons.outlined.ChevronRight
+import androidx.compose.material.icons.outlined.People
+import androidx.compose.material.icons.outlined.Logout
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -13,6 +18,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -25,17 +31,16 @@ private val BgPage = Color(0xFFF2F6F8)
 
 @Composable
 fun DashboardScreen(
-    onLogoutClick : () -> Unit,
-    onNavigateToBarang : () -> Unit,
-    onNavigateToKas : () -> Unit,
-    onNavigateToPelanggan : () -> Unit,
-    ) {
+    onLogoutClick: () -> Unit,
+    onNavigateToBarang: () -> Unit,
+    onNavigateToKas: () -> Unit,
+    onNavigateToPelanggan: () -> Unit,
+) {
     Column(
         modifier = Modifier
             .fillMaxSize()
             .background(BgPage)
     ) {
-
         Box(
             modifier = Modifier
                 .fillMaxWidth()
@@ -102,7 +107,6 @@ fun DashboardScreen(
                 .fillMaxSize()
                 .padding(horizontal = 20.dp, vertical = 20.dp)
         ) {
-
             Text(
                 text = "MENU UTAMA",
                 fontSize = 11.sp,
@@ -113,8 +117,9 @@ fun DashboardScreen(
             )
 
             MenuCard(
-                icon = "📦",
+                icon = Icons.Outlined.Inventory2,
                 iconBg = TealLight,
+                iconTint = TealPrimary,
                 title = "List Barang",
                 subtitle = "Lihat daftar produk & stok",
                 onClick = onNavigateToBarang
@@ -123,8 +128,9 @@ fun DashboardScreen(
             Spacer(modifier = Modifier.height(12.dp))
 
             MenuCard(
-                icon = "💰",
+                icon = Icons.Outlined.AccountBalanceWallet,
                 iconBg = Color(0xFFFEF3C7),
+                iconTint = Color(0xFFD97706),
                 title = "List Kas",
                 subtitle = "Lihat daftar kas & saldo",
                 onClick = onNavigateToKas
@@ -133,14 +139,13 @@ fun DashboardScreen(
             Spacer(modifier = Modifier.height(12.dp))
 
             MenuCard(
-                icon = "👤",
+                icon = Icons.Outlined.People,
                 iconBg = Color(0xFFEFF6FF),
+                iconTint = Color(0xFF3B82F6),
                 title = "List Pelanggan",
                 subtitle = "Lihat daftar pelanggan terdaftar",
                 onClick = onNavigateToPelanggan
             )
-
-            Spacer(modifier = Modifier.height(12.dp))
 
             Spacer(modifier = Modifier.weight(1f))
 
@@ -154,6 +159,14 @@ fun DashboardScreen(
                     contentColor = Color(0xFFEF4444)
                 )
             ) {
+                Icon(
+                    imageVector = Icons.Outlined.Logout,
+                    contentDescription = null,
+                    modifier = Modifier
+                        .size(18.dp)
+                        .padding(end = 0.dp)
+                )
+                Spacer(modifier = Modifier.width(8.dp))
                 Text(
                     text = "Keluar",
                     fontSize = 14.sp,
@@ -166,11 +179,12 @@ fun DashboardScreen(
 
 @Composable
 private fun MenuCard(
-    icon : String,
-    iconBg : Color,
-    title : String,
-    subtitle : String,
-    onClick : () -> Unit
+    icon: ImageVector,
+    iconBg: Color,
+    iconTint: Color,
+    title: String,
+    subtitle: String,
+    onClick: () -> Unit
 ) {
     Card(
         modifier = Modifier
@@ -192,7 +206,12 @@ private fun MenuCard(
                     .background(iconBg),
                 contentAlignment = Alignment.Center
             ) {
-                Text(text = icon, fontSize = 22.sp)
+                Icon(
+                    imageVector = icon,
+                    contentDescription = null,
+                    tint = iconTint,
+                    modifier = Modifier.size(24.dp)
+                )
             }
 
             Column(modifier = Modifier.weight(1f)) {
@@ -210,7 +229,12 @@ private fun MenuCard(
                 )
             }
 
-            Text(text = "›", fontSize = 22.sp, color = TextGray)
+            Icon(
+                imageVector = Icons.Outlined.ChevronRight,
+                contentDescription = null,
+                tint = TextGray,
+                modifier = Modifier.size(20.dp)
+            )
         }
     }
 }

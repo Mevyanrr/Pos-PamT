@@ -1,9 +1,14 @@
 package com.example.pos_pamt.ui.view
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.outlined.ArrowBack
+import androidx.compose.material.icons.outlined.AccountBalanceWallet
+import androidx.compose.material.icons.outlined.Warning
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -18,14 +23,12 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.pos_pamt.data.Kas
 import com.example.pos_pamt.viewmodel.DataUiState
 import com.example.pos_pamt.viewmodel.KasViewModel
-import androidx.compose.foundation.background
 
-private val AdminPurple = Color(0xFF6366F1)
-private val AdminLight  = Color(0xFFEDE9FE)
-private val TextDark    = Color(0xFF0D2B2A)
-private val TextGray    = Color(0xFF8AB5B1)
-private val BgPage      = Color(0xFFF2F6F8)
-private val DangerRed   = Color(0xFFEF4444)
+private val AdminPurple  = Color(0xFF6366F1)
+private val TextDark     = Color(0xFF0D2B2A)
+private val TextGray     = Color(0xFF8AB5B1)
+private val BgPage       = Color(0xFFF2F6F8)
+private val DangerRed    = Color(0xFFEF4444)
 private val SuccessGreen = Color(0xFF14A97A)
 
 @Composable
@@ -40,7 +43,6 @@ fun ListKasScreen(
             .fillMaxSize()
             .background(BgPage)
     ) {
-
         Box(
             modifier = Modifier
                 .fillMaxWidth()
@@ -56,7 +58,6 @@ fun ListKasScreen(
                 verticalAlignment     = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(12.dp)
             ) {
-                // Tombol Back
                 IconButton(
                     onClick  = onBackClick,
                     modifier = Modifier
@@ -64,14 +65,19 @@ fun ListKasScreen(
                         .clip(RoundedCornerShape(10.dp))
                         .background(Color.White.copy(alpha = 0.2f))
                 ) {
-                    Text(text = "←", fontSize = 18.sp, color = Color.White)
+                    Icon(
+                        imageVector        = Icons.AutoMirrored.Outlined.ArrowBack,
+                        contentDescription = "Kembali",
+                        tint               = Color.White,
+                        modifier           = Modifier.size(20.dp)
+                    )
                 }
 
                 Column {
                     Text(
-                        text     = "Admin",
-                        fontSize = 11.sp,
-                        color    = Color.White.copy(alpha = 0.7f),
+                        text          = "Admin",
+                        fontSize      = 11.sp,
+                        color         = Color.White.copy(alpha = 0.7f),
                         letterSpacing = 0.7.sp
                     )
                     Text(
@@ -90,11 +96,9 @@ fun ListKasScreen(
                 .padding(horizontal = 20.dp)
                 .padding(top = 18.dp)
         ) {
-
             when (val state = kasState.value) {
 
-                is DataUiState.Idle -> {
-                }
+                is DataUiState.Idle -> {}
 
                 is DataUiState.Loading -> {
                     Box(
@@ -122,7 +126,12 @@ fun ListKasScreen(
                             horizontalAlignment = Alignment.CenterHorizontally,
                             modifier            = Modifier.padding(24.dp)
                         ) {
-                            Text(text = "⚠️", fontSize = 40.sp)
+                            Icon(
+                                imageVector        = Icons.Outlined.Warning,
+                                contentDescription = null,
+                                tint               = DangerRed,
+                                modifier           = Modifier.size(48.dp)
+                            )
                             Spacer(modifier = Modifier.height(12.dp))
                             Text(
                                 text       = state.message,
@@ -173,21 +182,28 @@ fun ListKasScreen(
                     }
 
                     Text(
-                        text     = "DAFTAR KAS",
-                        fontSize = 11.sp,
-                        fontWeight = FontWeight.SemiBold,
-                        color    = TextGray,
+                        text          = "DAFTAR KAS",
+                        fontSize      = 11.sp,
+                        fontWeight    = FontWeight.SemiBold,
+                        color         = TextGray,
                         letterSpacing = 0.8.sp,
-                        modifier = Modifier.padding(bottom = 12.dp)
+                        modifier      = Modifier.padding(bottom = 12.dp)
                     )
 
                     if (kasList.isEmpty()) {
                         Box(
-                            modifier         = Modifier.fillMaxWidth().padding(32.dp),
+                            modifier         = Modifier
+                                .fillMaxWidth()
+                                .padding(32.dp),
                             contentAlignment = Alignment.Center
                         ) {
                             Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                                Text(text = "💰", fontSize = 40.sp)
+                                Icon(
+                                    imageVector        = Icons.Outlined.AccountBalanceWallet,
+                                    contentDescription = null,
+                                    tint               = TextGray,
+                                    modifier           = Modifier.size(48.dp)
+                                )
                                 Spacer(modifier = Modifier.height(10.dp))
                                 Text(
                                     text     = "Belum ada data kas",
@@ -225,8 +241,8 @@ fun ListKasScreen(
 @Composable
 private fun KasRow(kas: Kas) {
     Row(
-        modifier          = Modifier.padding(horizontal = 16.dp, vertical = 12.dp),
-        verticalAlignment = Alignment.CenterVertically,
+        modifier              = Modifier.padding(horizontal = 16.dp, vertical = 12.dp),
+        verticalAlignment     = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(12.dp)
     ) {
         Box(
@@ -238,7 +254,12 @@ private fun KasRow(kas: Kas) {
                 ),
             contentAlignment = Alignment.Center
         ) {
-            Text(text = "💵", fontSize = 18.sp)
+            Icon(
+                imageVector        = Icons.Outlined.AccountBalanceWallet,
+                contentDescription = null,
+                tint               = if (kas.isActive) Color(0xFF16A34A) else Color(0xFFD97706),
+                modifier           = Modifier.size(20.dp)
+            )
         }
 
         Column(modifier = Modifier.weight(1f)) {
@@ -287,9 +308,9 @@ private fun StatKasCard(
     ) {
         Column(modifier = Modifier.padding(14.dp)) {
             Text(
-                text     = label,
-                fontSize = 10.sp,
-                color    = TextGray,
+                text          = label,
+                fontSize      = 10.sp,
+                color         = TextGray,
                 letterSpacing = 0.6.sp
             )
             Text(
