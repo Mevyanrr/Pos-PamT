@@ -81,12 +81,12 @@ fun MainNavHost(
     ) {
         composable(Screen.Login.route) {
             LoginScreen(
-                email            = email.value,
-                password         = password.value,
-                uiState          = uiState.value,
-                onEmailChange    = authViewModel::onEmailChange,
+                email = email.value,
+                password = password.value,
+                uiState = uiState.value,
+                onEmailChange = authViewModel::onEmailChange,
                 onPasswordChange = authViewModel::onPasswordChange,
-                onLoginClick     = { authViewModel.login() }
+                onLoginClick = { authViewModel.login() }
             )
         }
 

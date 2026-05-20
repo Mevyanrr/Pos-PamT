@@ -172,28 +172,6 @@ fun ListKasScreen(
                         )
                     }
 
-                    Card(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(bottom = 14.dp),
-                        shape  = RoundedCornerShape(8.dp),
-                        colors = CardDefaults.cardColors(containerColor = AdminLight)
-                    ) {
-                        Row(
-                            modifier              = Modifier.padding(10.dp),
-                            horizontalArrangement = Arrangement.spacedBy(8.dp),
-                            verticalAlignment     = Alignment.Top
-                        ) {
-                            Text(text = "🔒", fontSize = 14.sp)
-                            Text(
-                                text     = "Halaman ini hanya dapat diakses oleh Admin. Setiap perubahan saldo otomatis tercatat di log_kas.",
-                                fontSize = 11.sp,
-                                color    = Color(0xFF3D6360),
-                                lineHeight = 16.sp
-                            )
-                        }
-                    }
-
                     Text(
                         text     = "DAFTAR KAS",
                         fontSize = 11.sp,
