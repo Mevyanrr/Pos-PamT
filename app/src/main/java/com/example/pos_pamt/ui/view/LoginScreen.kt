@@ -41,28 +41,22 @@ fun LoginScreen(
                         colors = listOf(TealPrimary, Color(0xFF00CDB9))
                     )
                 )
-                .padding(horizontal = 28.dp, vertical = 48.dp)
+                .padding(horizontal = 28.dp, vertical = 60.dp)
         ) {
             Column {
                 Text(
-                    text = "PAMT",
+                    text = "KASIRIN",
                     fontSize = 36.sp,
                     fontWeight = FontWeight.ExtraBold,
                     color = Color.White,
                     letterSpacing = (-1).sp
                 )
                 Text(
-                    text = "Pengembangan Aplikasi Mobile Terapan",
-                    fontSize = 12.sp,
-                    color = Color.White.copy(alpha = 0.7f),
-                    modifier = Modifier.padding(top = 4.dp)
-                )
-                Text(
-                    text = "Aplikasi Kasir · Universitas Brawijaya 2026",
+                    text = "Aplikasi Pengelola Kasir dan Inventori",
                     fontSize = 14.sp,
                     fontWeight = FontWeight.SemiBold,
                     color = Color.White.copy(alpha = 0.85f),
-                    modifier = Modifier.padding(top = 20.dp)
+                    modifier = Modifier.padding(top = 10.dp)
                 )
             }
         }

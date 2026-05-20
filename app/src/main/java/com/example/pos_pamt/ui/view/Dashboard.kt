@@ -54,13 +54,13 @@ fun DashboardScreen(
             ) {
                 Column {
                     Text(
-                        text = "Selamat datang",
+                        text = "Selamat datang di",
                         fontSize = 12.sp,
                         color = Color.White.copy(alpha = 0.75f),
                         letterSpacing = 0.6.sp
                     )
                     Text(
-                        text = "PAMT Kasir",
+                        text = "KASIRIN",
                         fontSize = 20.sp,
                         fontWeight = FontWeight.Bold,
                         color = Color.White
@@ -71,7 +71,7 @@ fun DashboardScreen(
                         color = Color.White.copy(alpha = 0.2f)
                     ) {
                         Text(
-                            text = "Kasir",
+                            text = "Admin",
                             fontSize = 11.sp,
                             fontWeight = FontWeight.SemiBold,
                             color = Color.White,

@@ -190,28 +190,6 @@ fun ListBarangScreen(
                         )
                     }
 
-                    Card(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(bottom = 14.dp),
-                        shape  = RoundedCornerShape(8.dp),
-                        colors = CardDefaults.cardColors(containerColor = TealLight)
-                    ) {
-                        Row(
-                            modifier              = Modifier.padding(10.dp),
-                            horizontalArrangement = Arrangement.spacedBy(8.dp),
-                            verticalAlignment     = Alignment.Top
-                        ) {
-                            Text(text = "ℹ️", fontSize = 14.sp)
-                            Text(
-                                text       = "Kasir hanya bisa melihat produk (read-only). Tambah/Edit/Hapus hanya untuk Admin.",
-                                fontSize   = 11.sp,
-                                color      = Color(0xFF3D6360),
-                                lineHeight = 16.sp
-                            )
-                        }
-                    }
-
                     if (filtered.isEmpty()) {
                         Box(
                             modifier         = Modifier.fillMaxSize(),
