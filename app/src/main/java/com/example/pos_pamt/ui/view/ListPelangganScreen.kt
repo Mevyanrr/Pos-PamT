@@ -180,7 +180,8 @@ fun ListPelangganScreen(
                 }
 
                 is DataUiState.Success -> {
-                    val filtered = state.data.filter { p ->
+                    val filtered = state
+                        .data.filter { p ->
                         p.nama.contains(searchQuery.value, ignoreCase = true) ||
                                 p.noTelp.contains(searchQuery.value, ignoreCase = true)
                     }
