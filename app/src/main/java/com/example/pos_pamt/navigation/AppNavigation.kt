@@ -1,138 +1,128 @@
 package com.example.pos_pamt.navigation
 
-import com.example.pos_pamt.ui.view.DashboardScreen
-import com.example.pos_pamt.ui.view.ListBarangScreen
-import com.example.pos_pamt.ui.view.ListKasScreen
-import com.example.pos_pamt.ui.view.LoginScreen
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.runtime.Composable
+import androidx.compose.foundation.layout.*
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
-import androidx.navigation.compose.rememberNavController
-import com.example.pos_pamt.viewmodel.BarangViewModel
-import com.example.pos_pamt.viewmodel.KasViewModel
-import androidx.compose.runtime.LaunchedEffect
-import com.example.pos_pamt.viewmodel.AuthCheckState
-import com.example.pos_pamt.viewmodel.AuthUiState
-import com.example.pos_pamt.viewmodel.AuthViewModel
-import com.example.pos_pamt.ui.view.ListPelangganScreen
-import com.example.pos_pamt.viewmodel.PelangganViewModel
+import androidx.navigation.compose.*
+import com.example.pos_pamt.data.UserRole
+import com.example.pos_pamt.ui.view.*
+import com.example.pos_pamt.viewmodel.*
+
+private val routesWithNavBar = listOf(
+    Screen.Dashboard.route,
+    Screen.Produk.route,
+    Screen.Pelanggan.route,
+    Screen.Transaksi.route,
+    Screen.Profil.route
+)
 
 @Composable
-fun AppNavigation(
-    authViewModel: AuthViewModel = viewModel()
-) {
-    val authCheckState = authViewModel.authCheckState.collectAsStateWithLifecycle()
-    when (authCheckState.value) {
-        is AuthCheckState.Checking -> {
-            Box(
-                modifier = Modifier.fillMaxSize(),
-                contentAlignment = Alignment.Center
-            ) {
-                CircularProgressIndicator()
-            }
-        }
-
-        is AuthCheckState.Authenticated -> {
-            MainNavHost(
-                authViewModel    = authViewModel,
-                startDestination = Screen.Dashboard.route
-            )
-        }
-
-        is AuthCheckState.NotAuthenticated -> {
-            MainNavHost(
-                authViewModel    = authViewModel,
-                startDestination = Screen.Login.route
-            )
-        }
+fun AppNavigation(authViewModel: AuthViewModel = viewModel()) {
+    val state = authViewModel.authCheckState.collectAsStateWithLifecycle()
+    when (state.value) {
+        is AuthCheckState.Checking         -> Box(Modifier.fillMaxSize(), Alignment.Center) { CircularProgressIndicator(color = Color(0xFF00B5A3)) }
+        is AuthCheckState.Authenticated    -> MainNavHost(authViewModel, Screen.Dashboard.route)
+        is AuthCheckState.NotAuthenticated -> MainNavHost(authViewModel, Screen.Login.route)
     }
 }
 
 @Composable
-fun MainNavHost(
-    authViewModel: AuthViewModel,
-    startDestination: String
-) {
-    val navController = rememberNavController()
-
-    val email    = authViewModel.email.collectAsStateWithLifecycle()
-    val password = authViewModel.password.collectAsStateWithLifecycle()
-    val uiState  = authViewModel.uiState.collectAsStateWithLifecycle()
+fun MainNavHost(authViewModel: AuthViewModel, startDestination: String) {
+    val navController  = rememberNavController()
+    val email          = authViewModel.email.collectAsStateWithLifecycle()
+    val password       = authViewModel.password.collectAsStateWithLifecycle()
+    val uiState        = authViewModel.uiState.collectAsStateWithLifecycle()
+    val userSession    = authViewModel.userSession.collectAsStateWithLifecycle()
+    val currentRoute   = navController.currentBackStackEntryAsState().value?.destination?.route
+    val isAdmin        = userSession.value.role is UserRole.Admin
+    val showNavBar     = currentRoute in routesWithNavBar
 
     LaunchedEffect(uiState.value) {
         if (uiState.value is AuthUiState.Success) {
-            navController.navigate(Screen.Dashboard.route) {
-                popUpTo(Screen.Login.route) { inclusive = true }
-            }
+            navController.navigate(Screen.Dashboard.route) { popUpTo(Screen.Login.route) { inclusive = true } }
             authViewModel.resetState()
         }
     }
 
-    NavHost(
-        navController    = navController,
-        startDestination = startDestination
-    ) {
-        composable(Screen.Login.route) {
-            LoginScreen(
-                email = email.value,
-                password = password.value,
-                uiState = uiState.value,
-                onEmailChange = authViewModel::onEmailChange,
-                onPasswordChange = authViewModel::onPasswordChange,
-                onLoginClick = { authViewModel.login() }
-            )
+    Scaffold(
+        bottomBar = {
+            if (showNavBar) {
+                BottomNavBar(
+                    currentRoute = currentRoute ?: "",
+                    isAdmin      = isAdmin,
+                    onBeranda    = { navController.navigate(Screen.Dashboard.route) { popUpTo(Screen.Dashboard.route) { inclusive = true } } },
+                    onTransaksi  = { navController.navigate(Screen.Transaksi.route) },
+                    onPelanggan  = { navController.navigate(Screen.Pelanggan.route) },
+                    onProduk     = { navController.navigate(Screen.Produk.route) },
+                    onProfil     = { navController.navigate(Screen.Profil.route) }
+                )
+            }
         }
+    ) { innerPadding ->
+        NavHost(navController = navController, startDestination = startDestination, modifier = Modifier.padding(innerPadding)) {
 
-        composable(Screen.Dashboard.route) {
-            DashboardScreen(
-                onLogoutClick = {
-                    authViewModel.logout()
-                    navController.navigate(Screen.Login.route) {
-                        popUpTo(Screen.Dashboard.route) { inclusive = true }
-                    }
-                },
-                onNavigateToBarang = {
-                    navController.navigate(Screen.Barang.route)
-                },
-                onNavigateToKas = {
-                    navController.navigate(Screen.Kas.route)
-                }
-                ,
-                onNavigateToPelanggan = {
-                    navController.navigate(Screen.Pelanggan.route)
-                }
-            )
-        }
+            composable(Screen.Login.route) {
+                LoginScreen(
+                    email = email.value, password = password.value, uiState = uiState.value,
+                    onEmailChange = authViewModel::onEmailChange,
+                    onPasswordChange = authViewModel::onPasswordChange,
+                    onLoginClick = { authViewModel.login() }
+                )
+            }
 
-        composable(Screen.Barang.route) {
-            val barangViewModel: BarangViewModel = viewModel()
-            ListBarangScreen(
-                viewModel  = barangViewModel,
-                onBackClick = { navController.popBackStack() }
-            )
-        }
+            composable(Screen.Dashboard.route) {
+                DashboardScreen(
+                    userSession             = userSession.value,
+                    onLogoutClick           = { authViewModel.logout(); navController.navigate(Screen.Login.route) { popUpTo(Screen.Dashboard.route) { inclusive = true } } },
+                    onNavigateToProduk      = { navController.navigate(Screen.Produk.route) },
+                    onNavigateToKas         = { navController.navigate(Screen.Kas.route) },
+                    onNavigateToPelanggan   = { navController.navigate(Screen.Pelanggan.route) },
+                    onNavigateToPengeluaran = { navController.navigate(Screen.Pengeluaran.route) },
+                    onNavigateToTransaksi   = { navController.navigate(Screen.Transaksi.route) },
+                    onNavigateToProfil      = { navController.navigate(Screen.Profil.route) }
+                )
+            }
 
-        composable(Screen.Kas.route) {
-            val kasViewModel: KasViewModel = viewModel()
-            ListKasScreen(
-                viewModel  = kasViewModel,
-                onBackClick = { navController.popBackStack() }
-            )
-        }
+            composable(Screen.Produk.route) {
+                val vm: ProdukViewModel = viewModel()
+                LaunchedEffect(Unit) { if (isAdmin) vm.loadLogProduk() }
+                ProdukScreen(viewModel = vm, isAdmin = isAdmin, onBackClick = { navController.popBackStack() })
+            }
 
-        composable(Screen.Pelanggan.route) {
-            val pelangganViewModel: PelangganViewModel = viewModel()
-            ListPelangganScreen(
-                viewModel   = pelangganViewModel,
-                onBackClick = { navController.popBackStack() }
-            )
+            composable(Screen.Kas.route) {
+                val vm: KasViewModel = viewModel()
+                LaunchedEffect(Unit) { vm.loadLogKas() }
+                KasScreen(viewModel = vm, onBackClick = { navController.popBackStack() })
+            }
+
+            composable(Screen.Pelanggan.route) {
+                val vm: PelangganViewModel = viewModel()
+                PelangganScreen(viewModel = vm, isAdmin = isAdmin, onBackClick = { navController.popBackStack() })
+            }
+
+            composable(Screen.Pengeluaran.route) {
+                val vm: PengeluaranViewModel = viewModel()
+                LaunchedEffect(Unit) { vm.loadLogPengeluaran() }
+                PengeluaranScreen(viewModel = vm, onBackClick = { navController.popBackStack() })
+            }
+
+            composable(Screen.Transaksi.route) {
+                val vm: PenjualanViewModel = viewModel()
+                TransaksiScreen(viewModel = vm, isAdmin = isAdmin, onBackClick = { navController.popBackStack() })
+            }
+
+            composable(Screen.Profil.route) {
+                ProfilScreen(
+                    userSession   = userSession.value,
+                    onLogoutClick = { authViewModel.logout(); navController.navigate(Screen.Login.route) { popUpTo(Screen.Dashboard.route) { inclusive = true } } },
+                    onBackClick   = { navController.popBackStack() }
+                )
+            }
         }
     }
 }
