@@ -12,3 +12,4 @@ sealed class AuthCheckState {
     object Authenticated : AuthCheckState()
     object NotAuthenticated : AuthCheckState()
 }
+
