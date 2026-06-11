@@ -26,8 +26,10 @@ class PelangganViewModel : ViewModel() {
         viewModelScope.launch {
             try {
                 _pelangganState.value = DataUiState.Loading
-                _pelangganState.value = DataUiState.Success(pelRepo.getAll())
-            } catch (e: Exception) { _pelangganState.value = DataUiState.Error(e.message ?: "Gagal memuat pelanggan.") }
+                _pelangganState.value = DataUiState.Success(pelRepo.getSemuaPelanggan())
+            } catch (e: Exception) {
+                _pelangganState.value = DataUiState.Error(e.message ?: "Gagal memuat pelanggan.")
+            }
         }
     }
 
@@ -36,13 +38,11 @@ class PelangganViewModel : ViewModel() {
             try {
                 _logPelangganState.value = DataUiState.Loading
                 _logPelangganState.value = DataUiState.Success(logRepo.getLogPelanggan())
-            } catch (e: Exception) { _logPelangganState.value = DataUiState.Error(e.message ?: "Gagal memuat log.") }
+            } catch (e: Exception) {
+                _logPelangganState.value = DataUiState.Error(e.message ?: "Gagal memuat log.")
+            }
         }
     }
-
-    fun onSearchChange(q: String) { _searchQuery.value = q }
-}
-
 
     fun onSearchQueryChange(query: String) {
         _searchQuery.value = query

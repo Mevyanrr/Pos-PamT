@@ -60,7 +60,7 @@ fun PelangganScreen(viewModel: PelangganViewModel, isAdmin: Boolean, onBackClick
             item {
                 Spacer(Modifier.height(18.dp))
                 OutlinedTextField(
-                    value = query.value, onValueChange = viewModel::onSearchChange,
+                    value = query.value, onValueChange = viewModel::onSearchQueryChange,
                     placeholder = { Text("Cari nama atau no. telp...", color = T3) },
                     leadingIcon = { Icon(Icons.Default.Search, null, tint = T3) },
                     modifier = Modifier.fillMaxWidth().padding(bottom = 12.dp),
