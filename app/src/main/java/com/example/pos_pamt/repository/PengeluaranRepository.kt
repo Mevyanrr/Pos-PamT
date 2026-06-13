@@ -48,4 +48,9 @@ class PengeluaranRepository {
             buildJsonObject { put("status", "batal") }
         ) { filter { eq("id", id) } }
     }
+
+    suspend fun hapus(id: String) {
+        supabase.postgrest["pengeluaran"]
+            .delete { filter { eq("id", id) } }
+    }
 }

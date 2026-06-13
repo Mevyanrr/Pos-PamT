@@ -39,9 +39,10 @@ fun PengeluaranScreen(viewModel: PengeluaranViewModel, onBackClick: () -> Unit) 
     val filter       = viewModel.filterStatus.collectAsStateWithLifecycle()
     val showTambah   = viewModel.showTambahForm.collectAsStateWithLifecycle()
     val showEdit     = viewModel.showEditForm.collectAsStateWithLifecycle()
+    val hapusTarget  = viewModel.hapusTarget.collectAsStateWithLifecycle()
 
     Column(modifier = Modifier.fillMaxSize().background(BgPage)) {
-        // ── HEADER ──
+        // HEADER
         Box(
             modifier = Modifier
                 .fillMaxWidth()
@@ -67,7 +68,6 @@ fun PengeluaranScreen(viewModel: PengeluaranViewModel, onBackClick: () -> Unit) 
             }
         }
 
-        // ── KONTEN ──
         LazyColumn(modifier = Modifier.fillMaxSize().padding(horizontal = 20.dp)) {
             item { Spacer(Modifier.height(18.dp)) }
             item {
@@ -83,9 +83,6 @@ fun PengeluaranScreen(viewModel: PengeluaranViewModel, onBackClick: () -> Unit) 
                             StatCard("Total", rupiahD(all.sumOf { it.total }), "bulan ini", RedLight, Danger, "pengeluaran", Modifier.weight(1f))
                             StatCard("Transaksi", "${all.size}", "${all.count { it.status.equals("batal", true) }} batal", YellowLight, Warn, "tercatat", Modifier.weight(1f))
                         }
-
-                        // INFO BOX
-                        InfoBox(Icons.Default.Lock, Admin, Admin2, "Hanya Admin (RLS: admin full akses pengeluaran). Kasir mendapat 403 jika mencoba akses.")
 
                         // TABS
                         Row(modifier = Modifier.fillMaxWidth()) {
@@ -112,16 +109,16 @@ fun PengeluaranScreen(viewModel: PengeluaranViewModel, onBackClick: () -> Unit) 
                         } else {
                             Card(
                                 Modifier.fillMaxWidth(),
-                                shape    = RoundedCornerShape(16.dp),
-                                colors   = CardDefaults.cardColors(containerColor = Color.White),
+                                shape     = RoundedCornerShape(16.dp),
+                                colors    = CardDefaults.cardColors(containerColor = Color.White),
                                 elevation = CardDefaults.cardElevation(2.dp)
                             ) {
                                 Column {
                                     filtered.forEachIndexed { idx, pen ->
                                         PengeluaranRow(
-                                            p        = pen,
-                                            onEdit   = { viewModel.openEditForm(pen) },
-                                            onBatal  = { viewModel.batalkanPengeluaran(pen.id) }
+                                            p      = pen,
+                                            onEdit = { viewModel.openEditForm(pen) },
+                                            onHapus = { viewModel.konfirmasiHapus(pen) }
                                         )
                                         if (idx != filtered.lastIndex) HorizontalDivider(color = Admin.copy(alpha = 0.07f), thickness = 0.5.dp)
                                     }
@@ -163,7 +160,34 @@ fun PengeluaranScreen(viewModel: PengeluaranViewModel, onBackClick: () -> Unit) 
         }
     }
 
-    // ── BOTTOM SHEET: TAMBAH ──
+    // DIALOG KONFIRMASI HAPUS
+    hapusTarget.value?.let { pen ->
+        AlertDialog(
+            onDismissRequest = { viewModel.batalKonfirmasiHapus() },
+            icon             = { Icon(Icons.Default.Delete, null, tint = Danger) },
+            title            = { Text("Hapus Pengeluaran", fontWeight = FontWeight.Bold) },
+            text             = {
+                Text(
+                    "Yakin ingin menghapus permanen \"${pen.deskripsi}\"? " +
+                            "Data tidak dapat dikembalikan.",
+                    fontSize = 14.sp
+                )
+            },
+            confirmButton    = {
+                Button(
+                    onClick = { viewModel.hapusPengeluaran() },
+                    colors  = ButtonDefaults.buttonColors(containerColor = Danger)
+                ) { Text("Hapus", fontWeight = FontWeight.Bold) }
+            },
+            dismissButton    = {
+                OutlinedButton(onClick = { viewModel.batalKonfirmasiHapus() }) {
+                    Text("Batal")
+                }
+            }
+        )
+    }
+
+    // BOTTOM SHEET: TAMBAH
     if (showTambah.value) {
         PengeluaranFormSheet(
             title       = "Tambah Pengeluaran",
@@ -174,7 +198,7 @@ fun PengeluaranScreen(viewModel: PengeluaranViewModel, onBackClick: () -> Unit) 
         )
     }
 
-    // ── BOTTOM SHEET: EDIT ──
+    // BOTTOM SHEET: EDIT
     if (showEdit.value) {
         PengeluaranFormSheet(
             title       = "Edit Pengeluaran",
@@ -186,7 +210,7 @@ fun PengeluaranScreen(viewModel: PengeluaranViewModel, onBackClick: () -> Unit) 
     }
 }
 
-// ── FORM BOTTOM SHEET ──
+// FORM BOTTOM SHEET
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun PengeluaranFormSheet(
@@ -217,48 +241,37 @@ private fun PengeluaranFormSheet(
             .padding(horizontal = 20.dp)
             .padding(bottom = 32.dp)
         ) {
-
-            // Handle + Judul
             Box(Modifier.fillMaxWidth().height(4.dp).width(38.dp).clip(RoundedCornerShape(2.dp)).background(Teal.copy(alpha = 0.25f)).align(Alignment.CenterHorizontally))
             Spacer(Modifier.height(4.dp))
             Text(title, fontSize = 16.sp, fontWeight = FontWeight.Bold, color = TDark, modifier = Modifier.padding(vertical = 14.dp))
             HorizontalDivider(color = Admin.copy(alpha = 0.1f))
             Spacer(Modifier.height(16.dp))
 
-            // INFO BOX
             Row(
                 modifier = Modifier.fillMaxWidth().clip(RoundedCornerShape(8.dp)).background(Admin2).padding(10.dp),
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
                 verticalAlignment     = Alignment.Top
             ) {
                 Icon(Icons.Default.Lock, null, tint = Admin, modifier = Modifier.size(15.dp).padding(top = 1.dp))
-                Text(
-                    text       = "Hanya Admin. Perubahan otomatis dicatat di log_pengeluaran.",
-                    fontSize   = 11.sp,
-                    color      = T2,
-                    lineHeight = 16.sp
-                )
+                Text("Perubahan otomatis dicatat.", fontSize = 11.sp, color = T2, lineHeight = 16.sp)
             }
             Spacer(Modifier.height(14.dp))
 
-            // KAS DROPDOWN
             FormDropdown(
-                label   = "KAS",
-                options = kasList.value.map { it.id to it.nama },
-                value   = kasId.value,
+                label    = "KAS",
+                options  = kasList.value.map { it.id to it.nama },
+                value    = kasId.value,
                 onChange = { viewModel.onKasIdChange(it) }
             )
 
-            // TANGGAL
             FormField(
-                label       = "TANGGAL",
-                value       = tanggal.value,
-                onChange    = { viewModel.onTanggalChange(it) },
-                placeholder = "YYYY-MM-DD",
+                label        = "TANGGAL",
+                value        = tanggal.value,
+                onChange     = { viewModel.onTanggalChange(it) },
+                placeholder  = "YYYY-MM-DD",
                 keyboardType = KeyboardType.Text
             )
 
-            // DESKRIPSI
             FormField(
                 label       = "DESKRIPSI",
                 value       = deskripsi.value,
@@ -266,7 +279,6 @@ private fun PengeluaranFormSheet(
                 placeholder = "misal: Bayar listrik bulan Mei…"
             )
 
-            // TOTAL
             FormField(
                 label        = "TOTAL (CHECK > 0)",
                 value        = total.value,
@@ -275,7 +287,6 @@ private fun PengeluaranFormSheet(
                 keyboardType = KeyboardType.Number
             )
 
-            // STATUS DROPDOWN
             FormDropdown(
                 label    = "STATUS (DEFAULT 'aktif')",
                 options  = listOf("aktif" to "aktif", "batal" to "batal"),
@@ -283,7 +294,6 @@ private fun PengeluaranFormSheet(
                 onChange = { viewModel.onStatusChange(it) }
             )
 
-            // ERROR
             if (formError.value != null) {
                 Spacer(Modifier.height(4.dp))
                 Row(
@@ -299,7 +309,6 @@ private fun PengeluaranFormSheet(
 
             Spacer(Modifier.height(12.dp))
 
-            // TOMBOL SIMPAN
             Button(
                 onClick  = onSubmit,
                 modifier = Modifier.fillMaxWidth().height(50.dp),
@@ -318,7 +327,6 @@ private fun PengeluaranFormSheet(
 
             Spacer(Modifier.height(10.dp))
 
-            // TOMBOL BATAL
             OutlinedButton(
                 onClick  = onDismiss,
                 modifier = Modifier.fillMaxWidth().height(46.dp),
@@ -332,7 +340,7 @@ private fun PengeluaranFormSheet(
     }
 }
 
-// ── HELPER: FORM FIELD ──
+// HELPER: FORM FIELD
 @Composable
 private fun FormField(
     label        : String,
@@ -344,16 +352,16 @@ private fun FormField(
     Column(modifier = Modifier.fillMaxWidth().padding(bottom = 14.dp)) {
         Text(label, fontSize = 11.sp, fontWeight = FontWeight.Bold, color = T3, letterSpacing = 0.6.sp, modifier = Modifier.padding(bottom = 6.dp))
         OutlinedTextField(
-            value         = value,
-            onValueChange = onChange,
-            placeholder   = { Text(placeholder, fontSize = 13.sp, color = T3) },
-            modifier      = Modifier.fillMaxWidth(),
-            shape         = RoundedCornerShape(8.dp),
-            singleLine    = true,
+            value           = value,
+            onValueChange   = onChange,
+            placeholder     = { Text(placeholder, fontSize = 13.sp, color = T3) },
+            modifier        = Modifier.fillMaxWidth(),
+            shape           = RoundedCornerShape(8.dp),
+            singleLine      = true,
             keyboardOptions = KeyboardOptions(keyboardType = keyboardType),
-            colors        = OutlinedTextFieldDefaults.colors(
-                unfocusedBorderColor = Teal.copy(alpha = 0.2f),
-                focusedBorderColor   = Teal,
+            colors          = OutlinedTextFieldDefaults.colors(
+                unfocusedBorderColor    = Teal.copy(alpha = 0.2f),
+                focusedBorderColor      = Teal,
                 unfocusedContainerColor = Color.White,
                 focusedContainerColor   = Color.White
             )
@@ -361,12 +369,12 @@ private fun FormField(
     }
 }
 
-// ── HELPER: DROPDOWN ──
+// HELPER: DROPDOWN
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun FormDropdown(
     label    : String,
-    options  : List<Pair<String, String>>,  // (value, label)
+    options  : List<Pair<String, String>>,
     value    : String,
     onChange : (String) -> Unit
 ) {
@@ -377,13 +385,13 @@ private fun FormDropdown(
         Text(label, fontSize = 11.sp, fontWeight = FontWeight.Bold, color = T3, letterSpacing = 0.6.sp, modifier = Modifier.padding(bottom = 6.dp))
         ExposedDropdownMenuBox(expanded = expanded, onExpandedChange = { expanded = it }) {
             OutlinedTextField(
-                value             = selectedLabel,
-                onValueChange     = {},
-                readOnly          = true,
-                modifier          = Modifier.fillMaxWidth().menuAnchor(MenuAnchorType.PrimaryNotEditable),
-                trailingIcon      = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
-                shape             = RoundedCornerShape(8.dp),
-                colors            = OutlinedTextFieldDefaults.colors(
+                value         = selectedLabel,
+                onValueChange = {},
+                readOnly      = true,
+                modifier      = Modifier.fillMaxWidth().menuAnchor(MenuAnchorType.PrimaryNotEditable),
+                trailingIcon  = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
+                shape         = RoundedCornerShape(8.dp),
+                colors        = OutlinedTextFieldDefaults.colors(
                     unfocusedBorderColor    = Teal.copy(alpha = 0.2f),
                     focusedBorderColor      = Teal,
                     unfocusedContainerColor = Color.White,
@@ -402,9 +410,9 @@ private fun FormDropdown(
     }
 }
 
-// ── ROW ITEM ──
+// ROW ITEM
 @Composable
-private fun PengeluaranRow(p: Pengeluaran, onEdit: () -> Unit, onBatal: () -> Unit) {
+private fun PengeluaranRow(p: Pengeluaran, onEdit: () -> Unit, onHapus: () -> Unit) {
     val isAktif = p.status.equals("aktif", true) || p.status.equals("lunas", true)
     Row(
         modifier              = Modifier.padding(horizontal = 16.dp, vertical = 12.dp),
@@ -412,7 +420,7 @@ private fun PengeluaranRow(p: Pengeluaran, onEdit: () -> Unit, onBatal: () -> Un
         horizontalArrangement = Arrangement.spacedBy(12.dp)
     ) {
         Box(
-            modifier        = Modifier.size(40.dp).clip(RoundedCornerShape(12.dp)).background(if (isAktif) RedLight else GrayNeutral),
+            modifier         = Modifier.size(40.dp).clip(RoundedCornerShape(12.dp)).background(if (isAktif) RedLight else GrayNeutral),
             contentAlignment = Alignment.Center
         ) {
             Icon(
@@ -433,18 +441,19 @@ private fun PengeluaranRow(p: Pengeluaran, onEdit: () -> Unit, onBatal: () -> Un
             Text("−${rupiahD(p.total)}", fontSize = 13.sp, fontWeight = FontWeight.Bold, color = if (isAktif) Danger else T3)
             Row(horizontalArrangement = Arrangement.spacedBy(4.dp)) {
                 SmallIconBtn(Icons.Default.Edit,   AdminLight, Admin,  onClick = onEdit)
-                SmallIconBtn(Icons.Default.Delete, RedLight,   Danger, onClick = onBatal)
+                SmallIconBtn(Icons.Default.Delete, RedLight,   Danger, onClick = onHapus)
             }
         }
     }
 }
 
-// ── LOG ROW ──
+// LOG ROW
 @Composable
 private fun PengeluaranLogRow(log: LogPengeluaran) {
     val dot = when {
         log.aktivitas.contains("created",   true) -> Green
         log.aktivitas.contains("cancelled", true) -> Danger
+        log.aktivitas.contains("deleted",   true) -> Danger
         else                                       -> Warn
     }
     Row(

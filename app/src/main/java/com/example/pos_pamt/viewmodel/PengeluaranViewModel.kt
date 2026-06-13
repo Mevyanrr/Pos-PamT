@@ -20,7 +20,6 @@ class PengeluaranViewModel : ViewModel() {
     private val _filterStatus = MutableStateFlow("Semua")
     val filterStatus: StateFlow<String> = _filterStatus
 
-    // ── FORM STATE ──
     private val _showTambahForm = MutableStateFlow(false)
     val showTambahForm: StateFlow<Boolean> = _showTambahForm
 
@@ -29,6 +28,9 @@ class PengeluaranViewModel : ViewModel() {
 
     private val _editTarget = MutableStateFlow<Pengeluaran?>(null)
     val editTarget: StateFlow<Pengeluaran?> = _editTarget
+
+    private val _hapusTarget = MutableStateFlow<Pengeluaran?>(null)
+    val hapusTarget: StateFlow<Pengeluaran?> = _hapusTarget
 
     private val _formDeskripsi = MutableStateFlow("")
     val formDeskripsi: StateFlow<String> = _formDeskripsi
@@ -57,6 +59,7 @@ class PengeluaranViewModel : ViewModel() {
     init {
         loadPengeluaran()
         loadKasList()
+        loadLogPengeluaran()
     }
 
     fun loadPengeluaran() {
@@ -93,14 +96,13 @@ class PengeluaranViewModel : ViewModel() {
 
     fun onFilterChange(s: String) { _filterStatus.value = s }
 
-    // ── FORM ACTIONS ──
     fun openTambahForm() {
-        _formDeskripsi.value = ""
-        _formTotal.value     = ""
-        _formTanggal.value   = java.time.LocalDate.now().toString()
-        _formStatus.value    = "aktif"
+        _formDeskripsi.value  = ""
+        _formTotal.value      = ""
+        _formTanggal.value    = java.time.LocalDate.now().toString()
+        _formStatus.value     = "aktif"
         if (_kasList.value.isNotEmpty()) _formKasId.value = _kasList.value.first().id
-        _formError.value     = null
+        _formError.value      = null
         _showTambahForm.value = true
     }
 
@@ -170,8 +172,8 @@ class PengeluaranViewModel : ViewModel() {
                     tanggal   = _formTanggal.value,
                     status    = _formStatus.value
                 )
-                _showEditForm.value  = false
-                _editTarget.value    = null
+                _showEditForm.value = false
+                _editTarget.value   = null
                 loadPengeluaran()
                 loadLogPengeluaran()
             } catch (e: Exception) {
@@ -182,10 +184,15 @@ class PengeluaranViewModel : ViewModel() {
         }
     }
 
-    fun batalkanPengeluaran(id: String) {
+    fun konfirmasiHapus(p: Pengeluaran) { _hapusTarget.value = p }
+    fun batalKonfirmasiHapus()          { _hapusTarget.value = null }
+
+    fun hapusPengeluaran() {
+        val id = _hapusTarget.value?.id ?: return
         viewModelScope.launch {
             try {
-                repo.batal(id)
+                repo.hapus(id)
+                _hapusTarget.value = null
                 loadPengeluaran()
                 loadLogPengeluaran()
             } catch (_: Exception) {}
