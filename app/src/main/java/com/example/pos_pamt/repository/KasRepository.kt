@@ -1,6 +1,8 @@
 package com.example.pos_pamt.repository
 
 import com.example.pos_pamt.data.Kas
+import com.example.pos_pamt.data.KasInsert
+import com.example.pos_pamt.data.KasUpdate
 import com.example.pos_pamt.data.LogKas
 import com.example.pos_pamt.data.SupabaseClientProvider
 import io.github.jan.supabase.postgrest.postgrest
@@ -22,23 +24,13 @@ class KasRepository {
     }
 
     suspend fun tambahKas(nama: String, saldo: Double) {
-        supabase.postgrest["kas"].insert(
-            mapOf(
-                "nama"      to nama,
-                "saldo"     to saldo,
-                "is_active" to true
-            )
-        )
+        supabase.postgrest["kas"].insert(KasInsert(nama = nama, saldo = saldo))
     }
 
     suspend fun editKas(id: String, nama: String, saldo: Double, isActive: Boolean) {
-        supabase.postgrest["kas"].update(
-            mapOf(
-                "nama"      to nama,
-                "saldo"     to saldo,
-                "is_active" to isActive
-            )
-        ) { filter { eq("id", id) } }
+        supabase.postgrest["kas"].update(KasUpdate(nama = nama, saldo = saldo, is_active = isActive)) {
+            filter { eq("id", id) }
+        }
     }
 
     suspend fun hapusKas(id: String) {

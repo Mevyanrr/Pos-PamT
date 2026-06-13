@@ -15,7 +15,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
@@ -53,7 +52,6 @@ fun KasScreen(viewModel: KasViewModel, onBackClick: () -> Unit) {
         }
     }
 
-    // Dialog Tambah
     if (showTambah.value) {
         DialogTambahKas(
             onDismiss = { viewModel.closeTambah() },
@@ -61,7 +59,6 @@ fun KasScreen(viewModel: KasViewModel, onBackClick: () -> Unit) {
         )
     }
 
-    // Dialog Edit
     showEdit.value?.let { kas ->
         DialogEditKas(
             kas       = kas,
@@ -70,26 +67,28 @@ fun KasScreen(viewModel: KasViewModel, onBackClick: () -> Unit) {
         )
     }
 
-    // Dialog Hapus
     showHapus.value?.let { kas ->
         AlertDialog(
             onDismissRequest = { viewModel.closeHapus() },
-            title = { Text("Hapus Kas", fontWeight = FontWeight.Bold) },
-            text  = { Text("Yakin ingin menghapus kas '${kas.nama}'? Tindakan ini tidak dapat dibatalkan.") },
+            shape = RoundedCornerShape(20.dp),
+            title = { Text("Hapus Kas", fontWeight = FontWeight.Bold, fontSize = 16.sp, color = TDark) },
+            text  = { Text("Yakin ingin menghapus kas '${kas.nama}'?\nTindakan ini tidak dapat dibatalkan.", fontSize = 13.sp, color = T3, lineHeight = 20.sp) },
             confirmButton = {
-                Button(
-                    onClick = { viewModel.hapusKas(kas) },
-                    colors  = ButtonDefaults.buttonColors(containerColor = Danger)
-                ) { Text("Hapus") }
+                Button(onClick = { viewModel.hapusKas(kas) }, colors = ButtonDefaults.buttonColors(containerColor = Danger), shape = RoundedCornerShape(10.dp), modifier = Modifier.height(40.dp)) {
+                    Text("Hapus", fontWeight = FontWeight.Bold, fontSize = 13.sp)
+                }
             },
             dismissButton = {
-                OutlinedButton(onClick = { viewModel.closeHapus() }) { Text("Batal") }
+                OutlinedButton(onClick = { viewModel.closeHapus() }, shape = RoundedCornerShape(10.dp), modifier = Modifier.height(40.dp)) {
+                    Text("Batal", fontWeight = FontWeight.Bold, fontSize = 13.sp)
+                }
             }
         )
     }
 
-    Scaffold(snackbarHost = { SnackbarHost(snackbarHostState) }) { padding ->
-        Column(modifier = Modifier.fillMaxSize().background(BgPage).padding(padding)) {
+    // ← FIX 1: Hapus padding dari Scaffold, pakai Box saja
+    Box(modifier = Modifier.fillMaxSize()) {
+        Column(modifier = Modifier.fillMaxSize().background(BgPage)) {
 
             // HEADER
             Box(
@@ -100,11 +99,11 @@ fun KasScreen(viewModel: KasViewModel, onBackClick: () -> Unit) {
                     .padding(top = 44.dp, bottom = 18.dp)
             ) {
                 Row(
-                    verticalAlignment = Alignment.CenterVertically,
+                    verticalAlignment     = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
                     IconButton(
-                        onClick = onBackClick,
+                        onClick  = onBackClick,
                         modifier = Modifier.size(40.dp).clip(RoundedCornerShape(10.dp)).background(Color.White.copy(alpha = 0.2f))
                     ) { Icon(Icons.Default.ArrowBack, null, tint = Color.White) }
 
@@ -114,16 +113,17 @@ fun KasScreen(viewModel: KasViewModel, onBackClick: () -> Unit) {
                     }
 
                     IconButton(
-                        onClick = { viewModel.openTambah() },
+                        onClick  = { viewModel.openTambah() },
                         modifier = Modifier.size(40.dp).clip(RoundedCornerShape(10.dp)).background(Color.White.copy(alpha = 0.2f))
                     ) { Icon(Icons.Default.Add, null, tint = Color.White) }
                 }
             }
 
             // CONTENT
-            LazyColumn(modifier = Modifier.fillMaxSize().padding(horizontal = 20.dp)) {
-                item { Spacer(Modifier.height(18.dp)) }
-
+            LazyColumn(
+                modifier       = Modifier.fillMaxSize(),
+                contentPadding = PaddingValues(horizontal = 20.dp, vertical = 18.dp)
+            ) {
                 item {
                     when (val s = kasState.value) {
                         is DataUiState.Idle    -> {}
@@ -131,28 +131,50 @@ fun KasScreen(viewModel: KasViewModel, onBackClick: () -> Unit) {
                         is DataUiState.Error   -> ErrorBox(s.message) { viewModel.loadKas() }
                         is DataUiState.Success -> {
                             val list = s.data
-                            Row(Modifier.fillMaxWidth().padding(bottom = 12.dp), Arrangement.spacedBy(10.dp)) {
-                                StatCard("Jumlah Kas", "${list.size}", "${list.count { it.isActive }} aktif", GreenLight, Green, "terdaftar", Modifier.weight(1f))
-                                StatCard("Total Saldo", rupiahD(list.sumOf { it.saldo }), "semua kas", AdminLight, Admin, "gabungan", Modifier.weight(1f))
+
+                            // ← FIX 3: StatCard inline supaya Rp dan nominal tidak kepisah
+                            Row(
+                                modifier              = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.spacedBy(10.dp)
+                            ) {
+                                KasStatCard(
+                                    label    = "Jumlah Kas",
+                                    value    = "${list.size}",
+                                    sub1     = "${list.count { it.isActive }} aktif",
+                                    sub2     = "terdaftar",
+                                    bgIcon   = GreenLight,
+                                    color    = Green,
+                                    modifier = Modifier.weight(1f)
+                                )
+                                KasStatCard(
+                                    label    = "Total Saldo",
+                                    value    = rupiahD(list.sumOf { it.saldo }),
+                                    sub1     = "semua kas",
+                                    sub2     = "gabungan",
+                                    bgIcon   = AdminLight,
+                                    color    = Admin,
+                                    modifier = Modifier.weight(1f)
+                                )
                             }
+
+                            Spacer(Modifier.height(12.dp))
                             InfoBox(Icons.Default.Lock, Admin, Admin2, "Halaman ini hanya dapat diakses oleh Admin (RLS: admin full akses kas). Kasir mendapat 403 jika mencoba akses.")
+                            Spacer(Modifier.height(18.dp))
                             SectionLabel("Daftar Kas")
+                            Spacer(Modifier.height(10.dp))
+
                             if (list.isEmpty()) {
                                 EmptyBox("Belum ada data kas", Icons.Default.AccountBalance)
                             } else {
                                 Card(
-                                    Modifier.fillMaxWidth(),
-                                    shape = RoundedCornerShape(16.dp),
-                                    colors = CardDefaults.cardColors(containerColor = Color.White),
+                                    modifier  = Modifier.fillMaxWidth(),
+                                    shape     = RoundedCornerShape(16.dp),
+                                    colors    = CardDefaults.cardColors(containerColor = Color.White),
                                     elevation = CardDefaults.cardElevation(2.dp)
                                 ) {
                                     Column {
                                         list.forEachIndexed { idx, kas ->
-                                            KasRow(
-                                                kas     = kas,
-                                                onEdit  = { viewModel.openEdit(kas) },
-                                                onHapus = { viewModel.openHapus(kas) }
-                                            )
+                                            KasRow(kas = kas, onEdit = { viewModel.openEdit(kas) }, onHapus = { viewModel.openHapus(kas) })
                                             if (idx != list.lastIndex)
                                                 HorizontalDivider(color = Admin.copy(alpha = 0.07f), thickness = 0.5.dp)
                                         }
@@ -163,7 +185,9 @@ fun KasScreen(viewModel: KasViewModel, onBackClick: () -> Unit) {
                     }
                 }
 
-                item { SectionLabel("Log Kas", top = 18) }
+                item { Spacer(Modifier.height(18.dp)) }
+                item { SectionLabel("Log Kas") }
+                item { Spacer(Modifier.height(10.dp)) }
 
                 item {
                     when (val l = logKasState.value) {
@@ -175,9 +199,9 @@ fun KasScreen(viewModel: KasViewModel, onBackClick: () -> Unit) {
                                 Text("Belum ada log kas.", fontSize = 12.sp, color = T3, modifier = Modifier.padding(vertical = 8.dp))
                             } else {
                                 Card(
-                                    Modifier.fillMaxWidth(),
-                                    shape = RoundedCornerShape(16.dp),
-                                    colors = CardDefaults.cardColors(containerColor = Color.White),
+                                    modifier  = Modifier.fillMaxWidth(),
+                                    shape     = RoundedCornerShape(16.dp),
+                                    colors    = CardDefaults.cardColors(containerColor = Color.White),
                                     elevation = CardDefaults.cardElevation(2.dp)
                                 ) {
                                     Column {
@@ -193,40 +217,86 @@ fun KasScreen(viewModel: KasViewModel, onBackClick: () -> Unit) {
                     }
                 }
 
-                item { Spacer(Modifier.height(20.dp)) }
+                item { Spacer(Modifier.height(24.dp)) }
+            }
+        }
+
+        // Snackbar di pojok bawah
+        SnackbarHost(
+            hostState = snackbarHostState,
+            modifier  = Modifier.align(Alignment.BottomCenter).padding(16.dp)
+        )
+    }
+}
+
+// ─── KasStatCard — FIX nominal tidak kepisah ─────────────────────────────────
+@Composable
+private fun KasStatCard(label: String, value: String, sub1: String, sub2: String, bgIcon: Color, color: Color, modifier: Modifier) {
+    Card(
+        modifier  = modifier,
+        shape     = RoundedCornerShape(14.dp),
+        colors    = CardDefaults.cardColors(containerColor = Color.White),
+        elevation = CardDefaults.cardElevation(2.dp)
+    ) {
+        Column(modifier = Modifier.padding(14.dp)) {
+            Text(
+                label.uppercase(),
+                fontSize      = 10.sp,
+                color         = T3,
+                fontWeight    = FontWeight.SemiBold,
+                letterSpacing = 0.5.sp
+            )
+            Spacer(Modifier.height(6.dp))
+            Text(
+                value,
+                fontSize   = 18.sp,
+                fontWeight = FontWeight.Bold,
+                color      = TDark,
+                maxLines   = 1,          // ← tidak wrap ke baris baru
+                softWrap   = false       // ← paksa 1 baris
+            )
+            Spacer(Modifier.height(4.dp))
+            Row(horizontalArrangement = Arrangement.spacedBy(4.dp), verticalAlignment = Alignment.CenterVertically) {
+                Surface(shape = RoundedCornerShape(6.dp), color = bgIcon) {
+                    Text(sub1, fontSize = 10.sp, color = color, fontWeight = FontWeight.SemiBold, modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp))
+                }
+                Text(sub2, fontSize = 10.sp, color = T3)
             }
         }
     }
 }
 
-// ─── KasRow ───────────────────────────────────────────────────────────────────
+// ─── KasRow — FIX button edit delete tidak nyambung ──────────────────────────
 @Composable
 private fun KasRow(kas: Kas, onEdit: () -> Unit, onHapus: () -> Unit) {
     Row(
-        modifier = Modifier.padding(horizontal = 16.dp, vertical = 12.dp),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(12.dp)
+        modifier              = Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 12.dp),
+        verticalAlignment     = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(10.dp)   // ← naik dari 12 ke 10, jelas terpisah
     ) {
         Box(
-            modifier = Modifier.size(40.dp).clip(RoundedCornerShape(12.dp))
-                .background(if (kas.isActive) GreenLight else YellowLight),
+            modifier = Modifier.size(40.dp).clip(RoundedCornerShape(12.dp)).background(if (kas.isActive) GreenLight else YellowLight),
             contentAlignment = Alignment.Center
         ) {
             Icon(Icons.Default.AccountBalance, null, tint = if (kas.isActive) Green else WarnDark, modifier = Modifier.size(20.dp))
         }
+
         Column(modifier = Modifier.weight(1f)) {
             Text(kas.nama, fontSize = 13.sp, fontWeight = FontWeight.Bold, color = TDark)
             Text("Saldo: ${rupiahD(kas.saldo)}", fontSize = 11.sp, color = T3, modifier = Modifier.padding(top = 2.dp))
         }
+
         Surface(shape = RoundedCornerShape(8.dp), color = if (kas.isActive) GreenLight else RedLight) {
             Text(
                 if (kas.isActive) "Aktif" else "Nonaktif",
                 fontSize = 10.sp, fontWeight = FontWeight.SemiBold,
-                color = if (kas.isActive) Green else Danger,
+                color    = if (kas.isActive) Green else Danger,
                 modifier = Modifier.padding(horizontal = 8.dp, vertical = 3.dp)
             )
         }
-        Row(horizontalArrangement = Arrangement.spacedBy(4.dp)) {
+
+        // ← FIX 2: button edit & delete pakai spacedBy(6.dp) supaya tidak nyambung
+        Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
             SmallIconBtn(Icons.Default.Edit,   AdminLight, Admin,  onClick = onEdit)
             SmallIconBtn(Icons.Default.Delete, RedLight,   Danger, onClick = onHapus)
         }
@@ -237,11 +307,11 @@ private fun KasRow(kas: Kas, onEdit: () -> Unit, onHapus: () -> Unit) {
 @Composable
 private fun KasLogRow(log: LogKas) {
     val isMasuk = log.tipe.equals("masuk", true)
-    val dot = if (isMasuk) Green else Danger
+    val dot     = if (isMasuk) Green else Danger
     Row(
-        modifier = Modifier.padding(horizontal = 16.dp, vertical = 11.dp),
+        modifier              = Modifier.padding(horizontal = 16.dp, vertical = 11.dp),
         horizontalArrangement = Arrangement.spacedBy(10.dp),
-        verticalAlignment = Alignment.Top
+        verticalAlignment     = Alignment.Top
     ) {
         Box(modifier = Modifier.padding(top = 5.dp).size(8.dp).clip(CircleShape).background(dot))
         Column {
@@ -257,51 +327,57 @@ private fun KasLogRow(log: LogKas) {
     }
 }
 
-// ─── SmallIconBtn ─────────────────────────────────────────────────────────────
-@Composable
-fun SmallIconBtn(icon: ImageVector, bg: Color, tint: Color, onClick: () -> Unit = {}) {
-    IconButton(
-        onClick = onClick,
-        modifier = Modifier.size(32.dp).clip(RoundedCornerShape(8.dp)).background(bg)
-    ) {
-        Icon(icon, null, tint = tint, modifier = Modifier.size(15.dp))
-    }
-}
-
 // ─── Dialog Tambah ────────────────────────────────────────────────────────────
 @Composable
 fun DialogTambahKas(onDismiss: () -> Unit, onSimpan: (String, Double) -> Unit) {
-    var nama  by remember { mutableStateOf("") }
-    var saldo by remember { mutableStateOf("") }
+    var nama      by remember { mutableStateOf("") }
+    var saldo     by remember { mutableStateOf("") }
+    var namaError by remember { mutableStateOf(false) }
 
     AlertDialog(
         onDismissRequest = onDismiss,
-        title = { Text("Tambah Kas", fontWeight = FontWeight.Bold) },
+        shape = RoundedCornerShape(20.dp),
+        title = { Text("Tambah Kas", fontWeight = FontWeight.Bold, fontSize = 17.sp, color = TDark) },
         text  = {
-            Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
+            Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
                 OutlinedTextField(
-                    value = nama, onValueChange = { nama = it },
-                    label = { Text("Nama Kas") },
-                    modifier = Modifier.fillMaxWidth(),
-                    singleLine = true
+                    value          = nama,
+                    onValueChange  = { nama = it; namaError = false },
+                    label          = { Text("Nama Kas") },
+                    modifier       = Modifier.fillMaxWidth(),
+                    singleLine     = true,
+                    isError        = namaError,
+                    supportingText = if (namaError) {{ Text("Nama tidak boleh kosong", color = Danger, fontSize = 11.sp) }} else null,
+                    shape          = RoundedCornerShape(12.dp)
                 )
                 OutlinedTextField(
-                    value = saldo, onValueChange = { saldo = it },
-                    label = { Text("Saldo Awal") },
-                    modifier = Modifier.fillMaxWidth(),
-                    singleLine = true,
-                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
+                    value           = saldo,
+                    onValueChange   = { saldo = it },
+                    label           = { Text("Saldo Awal") },
+                    modifier        = Modifier.fillMaxWidth(),
+                    singleLine      = true,
+                    shape           = RoundedCornerShape(12.dp),
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                    prefix          = { Text("Rp ", color = T3, fontSize = 13.sp) }
                 )
             }
         },
         confirmButton = {
-            Button(onClick = {
-                val s = saldo.toDoubleOrNull() ?: 0.0
-                if (nama.isNotBlank()) onSimpan(nama.trim(), s)
-            }) { Text("Simpan") }
+            Button(
+                onClick = {
+                    if (nama.isBlank()) { namaError = true; return@Button }
+                    val s = saldo.replace(".", "").replace(",", "").toDoubleOrNull() ?: 0.0
+                    onSimpan(nama.trim(), s)
+                },
+                shape    = RoundedCornerShape(10.dp),
+                modifier = Modifier.height(42.dp),
+                colors   = ButtonDefaults.buttonColors(containerColor = Admin)
+            ) { Text("Simpan", fontWeight = FontWeight.Bold, fontSize = 13.sp) }
         },
         dismissButton = {
-            OutlinedButton(onClick = onDismiss) { Text("Batal") }
+            OutlinedButton(onClick = onDismiss, shape = RoundedCornerShape(10.dp), modifier = Modifier.height(42.dp)) {
+                Text("Batal", fontWeight = FontWeight.Bold, fontSize = 13.sp, color = T3)
+            }
         }
     )
 }
@@ -309,42 +385,75 @@ fun DialogTambahKas(onDismiss: () -> Unit, onSimpan: (String, Double) -> Unit) {
 // ─── Dialog Edit ──────────────────────────────────────────────────────────────
 @Composable
 fun DialogEditKas(kas: Kas, onDismiss: () -> Unit, onSimpan: (String, Double, Boolean) -> Unit) {
-    var nama  by remember { mutableStateOf(kas.nama) }
-    var saldo by remember { mutableStateOf(kas.saldo.toInt().toString()) }
-    var aktif by remember { mutableStateOf(kas.isActive) }
+    var nama      by remember { mutableStateOf(kas.nama) }
+    var saldo     by remember { mutableStateOf(kas.saldo.toLong().toString()) }
+    var aktif     by remember { mutableStateOf(kas.isActive) }
+    var namaError by remember { mutableStateOf(false) }
 
     AlertDialog(
         onDismissRequest = onDismiss,
-        title = { Text("Edit Kas", fontWeight = FontWeight.Bold) },
+        shape = RoundedCornerShape(20.dp),
+        title = { Text("Edit Kas", fontWeight = FontWeight.Bold, fontSize = 17.sp, color = TDark) },
         text  = {
-            Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
+            Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
                 OutlinedTextField(
-                    value = nama, onValueChange = { nama = it },
-                    label = { Text("Nama Kas") },
-                    modifier = Modifier.fillMaxWidth(),
-                    singleLine = true
+                    value          = nama,
+                    onValueChange  = { nama = it; namaError = false },
+                    label          = { Text("Nama Kas") },
+                    modifier       = Modifier.fillMaxWidth(),
+                    singleLine     = true,
+                    isError        = namaError,
+                    supportingText = if (namaError) {{ Text("Nama tidak boleh kosong", color = Danger, fontSize = 11.sp) }} else null,
+                    shape          = RoundedCornerShape(12.dp)
                 )
                 OutlinedTextField(
-                    value = saldo, onValueChange = { saldo = it },
-                    label = { Text("Saldo") },
-                    modifier = Modifier.fillMaxWidth(),
-                    singleLine = true,
-                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
+                    value           = saldo,
+                    onValueChange   = { saldo = it },
+                    label           = { Text("Saldo") },
+                    modifier        = Modifier.fillMaxWidth(),
+                    singleLine      = true,
+                    shape           = RoundedCornerShape(12.dp),
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                    prefix          = { Text("Rp ", color = T3, fontSize = 13.sp) }
                 )
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    Checkbox(checked = aktif, onCheckedChange = { aktif = it })
-                    Text("Aktif", fontSize = 13.sp, modifier = Modifier.padding(start = 4.dp))
+                Row(
+                    modifier = Modifier.fillMaxWidth().clip(RoundedCornerShape(12.dp)).background(if (aktif) GreenLight else RedLight).padding(horizontal = 14.dp, vertical = 10.dp),
+                    verticalAlignment     = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    Column {
+                        Text("Status Kas", fontSize = 11.sp, color = if (aktif) Green else Danger, fontWeight = FontWeight.SemiBold)
+                        Text(if (aktif) "Aktif" else "Nonaktif", fontSize = 13.sp, fontWeight = FontWeight.Bold, color = if (aktif) Green else Danger)
+                    }
+                    Switch(
+                        checked         = aktif,
+                        onCheckedChange = { aktif = it },
+                        colors = SwitchDefaults.colors(
+                            checkedThumbColor   = Color.White,
+                            checkedTrackColor   = Green,
+                            uncheckedThumbColor = Color.White,
+                            uncheckedTrackColor = Danger.copy(alpha = 0.6f)
+                        )
+                    )
                 }
             }
         },
         confirmButton = {
-            Button(onClick = {
-                val s = saldo.toDoubleOrNull() ?: kas.saldo
-                if (nama.isNotBlank()) onSimpan(nama.trim(), s, aktif)
-            }) { Text("Simpan") }
+            Button(
+                onClick = {
+                    if (nama.isBlank()) { namaError = true; return@Button }
+                    val s = saldo.replace(".", "").replace(",", "").toDoubleOrNull() ?: kas.saldo
+                    onSimpan(nama.trim(), s, aktif)
+                },
+                shape    = RoundedCornerShape(10.dp),
+                modifier = Modifier.height(42.dp),
+                colors   = ButtonDefaults.buttonColors(containerColor = Admin)
+            ) { Text("Simpan", fontWeight = FontWeight.Bold, fontSize = 13.sp) }
         },
         dismissButton = {
-            OutlinedButton(onClick = onDismiss) { Text("Batal") }
+            OutlinedButton(onClick = onDismiss, shape = RoundedCornerShape(10.dp), modifier = Modifier.height(42.dp)) {
+                Text("Batal", fontWeight = FontWeight.Bold, fontSize = 13.sp, color = T3)
+            }
         }
     )
 }

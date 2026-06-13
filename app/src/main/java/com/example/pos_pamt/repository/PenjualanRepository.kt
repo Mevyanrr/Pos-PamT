@@ -34,24 +34,24 @@ class PenjualanRepository {
 
     suspend fun simpanTransaksi(
         pelangganId: String,
-        kasId: String,
-        kasirId: String,
-        produkId: String,
+        kasId      : String,
+        kasirId    : String,
+        produkId   : String,
         hargaSatuan: Double,
-        qty: Double,
+        qty        : Double,
         jumlahBayar: Double
     ) {
-        val subtotal = hargaSatuan * qty
+        val subtotal  = hargaSatuan * qty
         val kembalian = jumlahBayar - subtotal
 
         val penjualan = supabase.postgrest["penjualan"].insert(
             PenjualanInsert(
-                pelangganId = pelangganId,
-                kasId = kasId,
-                kasirId = kasirId,
-                total = subtotal,
-                jumlahBayar = jumlahBayar,
-                kembalian = kembalian,
+                pelangganId    = pelangganId,
+                kasId          = kasId,
+                kasirId        = kasirId,
+                total          = subtotal,
+                jumlahBayar    = jumlahBayar,
+                kembalian      = kembalian,
                 waktuPenjualan = "now()"
             )
         ) { select() }.decodeSingle<Penjualan>()
@@ -59,13 +59,14 @@ class PenjualanRepository {
         supabase.postgrest["penjualan_detail"].insert(
             PenjualanDetailInsert(
                 penjualanId = penjualan.id,
-                produkId = produkId,
+                produkId    = produkId,
                 hargaSatuan = hargaSatuan,
-                qty = qty,
-                subtotal = subtotal
+                qty         = qty,
+                subtotal    = subtotal
             )
         )
 
+        // Update stok produk
         val produk = supabase.postgrest["produk"]
             .select { filter { eq("id", produkId) } }
             .decodeSingle<Produk>()
@@ -73,21 +74,23 @@ class PenjualanRepository {
             ProdukUpdate(stok = produk.stok - qty)
         ) { filter { eq("id", produkId) } }
 
-        val kas = supabase.postgrest["kas"]
+        // Update saldo kas
+        val kas       = supabase.postgrest["kas"]
             .select { filter { eq("id", kasId) } }
             .decodeSingle<Kas>()
         val saldoBaru = kas.saldo + subtotal
         supabase.postgrest["kas"].update(
-            KasUpdate(saldo = saldoBaru)
+            KasSaldoUpdate(saldo = saldoBaru)  // ← fix di sini
         ) { filter { eq("id", kasId) } }
 
+        // Insert log kas
         supabase.postgrest["log_kas"].insert(
             LogKasInsert(
-                kasId = kasId,
-                tipe = "masuk",
-                saldoAwal = kas.saldo,
+                kasId      = kasId,
+                tipe       = "masuk",
+                saldoAwal  = kas.saldo,
                 saldoAkhir = saldoBaru,
-                perubahan = subtotal,
+                perubahan  = subtotal,
                 keterangan = "Penjualan #${penjualan.id.take(8)}"
             )
         )

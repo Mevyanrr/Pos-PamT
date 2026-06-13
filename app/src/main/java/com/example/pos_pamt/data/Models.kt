@@ -14,6 +14,20 @@ data class Kas(
 )
 
 @Serializable
+data class KasInsert(
+    @SerialName("nama_kas") val nama: String,
+    val saldo: Double,
+    val is_active: Boolean = true
+)
+
+@Serializable
+data class KasUpdate(
+    @SerialName("nama_kas") val nama: String,
+    val saldo: Double,
+    val is_active: Boolean
+)
+
+@Serializable
 data class Pelanggan(
     val id: String = "",
     val nama: String = "",
@@ -142,7 +156,7 @@ data class ProdukUpdate(
 )
 
 @Serializable
-data class KasUpdate(
+data class KasSaldoUpdate(
     val saldo: Double
 )
 

@@ -69,7 +69,10 @@ fun InfoBox(icon: ImageVector, iconTint: Color, bg: Color, text: String) {
 
 @Composable
 fun SmallIconBtn(icon: ImageVector, bg: Color, tint: Color, onClick: () -> Unit = {}) {
-    Box(modifier = Modifier.size(28.dp).clip(RoundedCornerShape(7.dp)).background(bg).clickable { onClick() }, contentAlignment = Alignment.Center) {
+    IconButton(
+        onClick = onClick,
+        modifier = Modifier.size(32.dp).clip(RoundedCornerShape(8.dp)).background(bg)
+    ) {
         Icon(icon, null, tint = tint, modifier = Modifier.size(15.dp))
     }
 }
