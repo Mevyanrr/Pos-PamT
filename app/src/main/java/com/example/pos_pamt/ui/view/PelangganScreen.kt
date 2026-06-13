@@ -38,8 +38,6 @@ fun PelangganScreen(viewModel: PelangganViewModel, isAdmin: Boolean, onBackClick
     val actionSuccess = viewModel.actionSuccess.collectAsStateWithLifecycle()
     val grad          = if (isAdmin) listOf(Admin, AdminPurple2) else listOf(Teal, Teal2)
 
-    var deleteTarget by remember { mutableStateOf<Pelanggan?>(null) }
-
     val snackbarHostState = remember { SnackbarHostState() }
     LaunchedEffect(actionError.value) {
         actionError.value?.let { snackbarHostState.showSnackbar(it); viewModel.clearMessages() }
@@ -50,7 +48,6 @@ fun PelangganScreen(viewModel: PelangganViewModel, isAdmin: Boolean, onBackClick
 
     Scaffold(snackbarHost = { SnackbarHost(snackbarHostState) }) { _ ->
         Column(modifier = Modifier.fillMaxSize().background(BgPage)) {
-            // Header
             Box(
                 modifier = Modifier.fillMaxWidth()
                     .background(Brush.linearGradient(grad))
@@ -98,13 +95,6 @@ fun PelangganScreen(viewModel: PelangganViewModel, isAdmin: Boolean, onBackClick
                                 StatCard("Total", "${filtered.size}", "terdaftar", Teal3, Teal, "pelanggan", Modifier.weight(1f))
                                 StatCard("Aktif", "${filtered.count { it.isActive }}", "${filtered.count { !it.isActive }} nonaktif", GreenLight, Green, "status aktif", Modifier.weight(1f))
                             }
-                            InfoBox(
-                                icon = if (isAdmin) Icons.Default.Lock else Icons.Default.Info,
-                                iconTint = if (isAdmin) Admin else Teal,
-                                bg = if (isAdmin) AdminLight else Teal3,
-                                text = if (isAdmin) "Admin: tambah, ubah, hapus pelanggan. Setiap aksi tercatat di log_pelanggan."
-                                else "Kasir: tambah & update pelanggan. Hapus hanya Admin."
-                            )
                             if (filtered.isEmpty()) EmptyBox("Pelanggan tidak ditemukan", Icons.Default.People)
                             else Card(
                                 Modifier.fillMaxWidth(),
@@ -116,9 +106,7 @@ fun PelangganScreen(viewModel: PelangganViewModel, isAdmin: Boolean, onBackClick
                                     filtered.forEachIndexed { idx, pel ->
                                         PelangganRow(
                                             pel = pel,
-                                            isAdmin = isAdmin,
-                                            onEdit = { viewModel.openEdit(pel) },
-                                            onDelete = { deleteTarget = pel }
+                                            onEdit = { viewModel.openEdit(pel) }
                                         )
                                         if (idx != filtered.lastIndex) HorizontalDivider(color = Teal.copy(alpha = 0.07f), thickness = 0.5.dp)
                                     }
@@ -156,7 +144,6 @@ fun PelangganScreen(viewModel: PelangganViewModel, isAdmin: Boolean, onBackClick
         }
     }
 
-    // Bottom Sheet Tambah
     if (showTambah.value) {
         PelangganFormSheet(
             title = "Tambah Pelanggan Baru",
@@ -167,43 +154,16 @@ fun PelangganScreen(viewModel: PelangganViewModel, isAdmin: Boolean, onBackClick
         )
     }
 
-    // Bottom Sheet Edit
     editTarget.value?.let { pel ->
-        PelangganFormSheet(
-            title = "Edit Data Pelanggan",
-            initial = pel,
-            isEdit = true,
-            onDismiss = { viewModel.closeEdit() },
-            onSave = { nama, noTelp, isActive -> viewModel.editPelanggan(pel.id, nama, noTelp, isActive) }
-        )
-    }
-
-    // Dialog Konfirmasi Hapus
-    deleteTarget?.let { pel ->
-        AlertDialog(
-            onDismissRequest = { deleteTarget = null },
-            title = { Text("Hapus Pelanggan?", fontWeight = FontWeight.Bold, color = TDark) },
-            text = {
-                Text(
-                    "\"${pel.nama}\" akan dihapus permanen. Jika pelanggan ini masih memiliki riwayat transaksi, penghapusan akan gagal.",
-                    fontSize = 13.sp, color = TextMid
-                )
-            },
-            confirmButton = {
-                Button(
-                    onClick = { viewModel.hapusPelanggan(pel.id); deleteTarget = null },
-                    colors = ButtonDefaults.buttonColors(containerColor = Danger),
-                    shape = RoundedCornerShape(8.dp)
-                ) { Text("Hapus", fontWeight = FontWeight.Bold) }
-            },
-            dismissButton = {
-                OutlinedButton(
-                    onClick = { deleteTarget = null },
-                    shape = RoundedCornerShape(8.dp)
-                ) { Text("Batal") }
-            },
-            containerColor = Color.White
-        )
+        key(pel.id) {
+            PelangganFormSheet(
+                title = "Edit Data Pelanggan",
+                initial = pel,
+                isEdit = true,
+                onDismiss = { viewModel.closeEdit() },
+                onSave = { nama, noTelp, isActive -> viewModel.editPelanggan(pel.id, nama, noTelp, isActive) }
+            )
+        }
     }
 }
 
@@ -230,27 +190,6 @@ private fun PelangganFormSheet(
         HorizontalDivider(color = Teal.copy(alpha = 0.1f))
 
         Column(modifier = Modifier.padding(horizontal = 20.dp, vertical = 18.dp)) {
-            // Info box
-            Surface(
-                modifier = Modifier.fillMaxWidth().padding(bottom = 14.dp),
-                shape = RoundedCornerShape(8.dp),
-                color = Teal3
-            ) {
-                Row(
-                    modifier = Modifier.padding(10.dp),
-                    horizontalArrangement = Arrangement.spacedBy(8.dp),
-                    verticalAlignment = Alignment.Top
-                ) {
-                    Icon(Icons.Default.Info, null, tint = Teal, modifier = Modifier.size(15.dp).padding(top = 1.dp))
-                    Text(
-                        if (isEdit) "Kasir dapat edit pelanggan. Perubahan otomatis tercatat di log_pelanggan."
-                        else "Kasir dapat menambah pelanggan. Otomatis tercatat di log_pelanggan.",
-                        fontSize = 11.sp, color = TextMid, lineHeight = 16.sp
-                    )
-                }
-            }
-
-            // Nama
             Text("NAMA *", fontSize = 11.sp, fontWeight = FontWeight.Bold, color = T3, letterSpacing = 0.6.sp, modifier = Modifier.padding(bottom = 6.dp))
             OutlinedTextField(
                 value = nama, onValueChange = { nama = it },
@@ -260,7 +199,6 @@ private fun PelangganFormSheet(
                 colors = OutlinedTextFieldDefaults.colors(focusedBorderColor = Teal, unfocusedBorderColor = Teal.copy(alpha = 0.2f))
             )
 
-            // No. Telepon
             Text("NO. TELEPON *", fontSize = 11.sp, fontWeight = FontWeight.Bold, color = T3, letterSpacing = 0.6.sp, modifier = Modifier.padding(bottom = 6.dp))
             OutlinedTextField(
                 value = noTelp, onValueChange = { noTelp = it },
@@ -271,7 +209,6 @@ private fun PelangganFormSheet(
                 colors = OutlinedTextFieldDefaults.colors(focusedBorderColor = Teal, unfocusedBorderColor = Teal.copy(alpha = 0.2f))
             )
 
-            // is_active dropdown
             Text("IS_ACTIVE", fontSize = 11.sp, fontWeight = FontWeight.Bold, color = T3, letterSpacing = 0.6.sp, modifier = Modifier.padding(bottom = 6.dp))
             ExposedDropdownMenuBox(
                 expanded = expanded,
@@ -293,7 +230,6 @@ private fun PelangganFormSheet(
                 }
             }
 
-            // Tombol Simpan
             Button(
                 onClick = { if (nama.isNotBlank()) onSave(nama, noTelp, isActive) },
                 modifier = Modifier.fillMaxWidth().height(48.dp),
@@ -305,7 +241,6 @@ private fun PelangganFormSheet(
                 Text(if (isEdit) "Simpan Perubahan" else "Simpan Pelanggan", fontWeight = FontWeight.Bold, fontSize = 14.sp)
             }
             Spacer(Modifier.height(8.dp))
-            // Tombol Batal
             OutlinedButton(
                 onClick = onDismiss,
                 modifier = Modifier.fillMaxWidth().height(44.dp),
@@ -320,7 +255,7 @@ private fun PelangganFormSheet(
 }
 
 @Composable
-private fun PelangganRow(pel: Pelanggan, isAdmin: Boolean, onEdit: () -> Unit, onDelete: () -> Unit) {
+private fun PelangganRow(pel: Pelanggan, onEdit: () -> Unit) {
     Row(
         modifier = Modifier.padding(horizontal = 16.dp, vertical = 12.dp),
         verticalAlignment = Alignment.CenterVertically,
@@ -341,10 +276,7 @@ private fun PelangganRow(pel: Pelanggan, isAdmin: Boolean, onEdit: () -> Unit, o
                 modifier = Modifier.padding(horizontal = 8.dp, vertical = 3.dp)
             )
         }
-        Row(horizontalArrangement = Arrangement.spacedBy(4.dp)) {
-            SmallIconBtn(Icons.Default.Edit, Teal3, Teal, onClick = onEdit)
-            if (isAdmin) SmallIconBtn(Icons.Default.Delete, RedLight, Danger, onClick = onDelete)
-        }
+        SmallIconBtn(Icons.Default.Edit, Teal3, Teal, onClick = onEdit)
     }
 }
 
@@ -352,7 +284,7 @@ private fun PelangganRow(pel: Pelanggan, isAdmin: Boolean, onEdit: () -> Unit, o
 private fun PelangganLogRow(log: LogPelanggan) {
     val dot = when {
         log.aktivitas.contains("baru", true) || log.aktivitas.contains("tambah", true) -> Green
-        log.aktivitas.contains("hapus", true) -> Danger
+        log.aktivitas.contains("nonaktif", true) -> Danger
         else -> Warn
     }
     Row(

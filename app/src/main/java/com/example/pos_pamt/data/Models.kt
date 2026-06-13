@@ -37,7 +37,13 @@ data class Pelanggan(
     val updatedAt: String = ""
 )
 
-//profiles
+@Serializable
+data class PelangganInsert(
+    val nama: String,
+    @SerialName("no_telp") val noTelp: String,
+    @SerialName("is_active") val isActive: Boolean
+)
+
 @Serializable
 data class ProfileRow(
     val id       : String = "",
@@ -45,7 +51,6 @@ data class ProfileRow(
     val role     : String = "kasir"
 )
 
-//produk
 @Serializable
 data class Produk(
     val id                                          : String  = "",
@@ -56,7 +61,6 @@ data class Produk(
     @SerialName("created_at") val createdAt         : String  = ""
 )
 
-//penjualan
 @Serializable
 data class Penjualan(
     val id                                              : String = "",
@@ -70,7 +74,6 @@ data class Penjualan(
     @SerialName("created_at")      val createdAt        : String = ""
 )
 
-//penjualan_detail
 @Serializable
 data class PenjualanDetail(
     val id                                              : String = "",
@@ -83,7 +86,6 @@ data class PenjualanDetail(
     @SerialName("updated_at")    val updatedAt          : String = ""
 )
 
-//pengeluaran
 @Serializable
 data class Pengeluaran(
     val id                                          : String = "",
@@ -96,7 +98,6 @@ data class Pengeluaran(
     @SerialName("updated_at") val updatedAt         : String = ""
 )
 
-//log_kas
 @Serializable
 data class LogKas(
     val id                                              : String = "",
@@ -109,7 +110,6 @@ data class LogKas(
     @SerialName("created_at")   val createdAt          : String = ""
 )
 
-//log_pelanggan
 @Serializable
 data class LogPelanggan(
     val id                                                  : String = "",
@@ -118,7 +118,6 @@ data class LogPelanggan(
     @SerialName("created_at")   val createdAt               : String = ""
 )
 
-//log_produk
 @Serializable
 data class LogProduk(
     val id                                          : String = "",

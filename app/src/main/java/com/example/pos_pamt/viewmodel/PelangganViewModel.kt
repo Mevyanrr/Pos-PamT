@@ -78,14 +78,4 @@ class PelangganViewModel : ViewModel() {
             } catch (e: Exception) { _actionError.value = e.message ?: "Gagal mengedit" }
         }
     }
-
-    fun hapusPelanggan(id: String) {
-        viewModelScope.launch {
-            try {
-                repo.hapusPelanggan(id)
-                _actionSuccess.value = "Pelanggan berhasil dihapus"
-                loadPelanggan(); loadLogPelanggan()
-            } catch (e: Exception) { _actionError.value = e.message ?: "Gagal menghapus" }
-        }
-    }
 }
