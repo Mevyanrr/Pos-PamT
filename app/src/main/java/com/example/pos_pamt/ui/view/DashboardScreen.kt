@@ -96,9 +96,6 @@ fun DashboardScreen(
             val adminItems = listOf(
                 QItem(Icons.Default.AccountBalance, BlueLight, BluePrimary, "Kas", onNavigateToKas),
                 QItem(Icons.Default.TrendingDown, RedLight, DangerDark, "Pengeluaran", onNavigateToPengeluaran),
-                QItem(Icons.Default.Inventory, GreenLight, SuccessAlt, "Produk", onNavigateToProduk),
-                QItem(Icons.Default.ReceiptLong, AdminLight, AdminPurple, "Semua\nTransaksi", onNavigateToTransaksi),
-                QItem(Icons.Default.People, YellowLight, WarnDark, "Pelanggan", onNavigateToPelanggan),
                 QItem(Icons.Default.ManageAccounts, BlueLight2, BlueDeep, "Profiles", onNavigateToProfil)
             )
             QuickGrid(if (isAdmin) adminItems else kasirItems)
