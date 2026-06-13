@@ -62,6 +62,14 @@ data class Produk(
 )
 
 @Serializable
+data class ProdukPayload(
+    val nama   : String  = "",
+    val harga  : Double  = 0.0,
+    val stok   : Double  = 0.0,
+    @SerialName("is_active") val isActive: Boolean = true
+)
+
+@Serializable
 data class Penjualan(
     val id                                              : String = "",
     @SerialName("pelanggan_id")    val pelangganId      : String = "",
@@ -138,4 +146,3 @@ data class LogPengeluaran(
     val keterangan                                          : String = "",
     @SerialName("created_at")     val createdAt             : String = ""
 )
-

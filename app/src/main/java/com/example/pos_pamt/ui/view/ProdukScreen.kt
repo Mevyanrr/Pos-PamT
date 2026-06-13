@@ -1,10 +1,8 @@
 package com.example.pos_pamt.ui.view
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
@@ -28,8 +26,6 @@ import com.example.pos_pamt.ui.theme.*
 import com.example.pos_pamt.viewmodel.DataUiState
 import com.example.pos_pamt.viewmodel.ProdukViewModel
 
-private val pills = listOf("Semua", "Obat", "Makanan", "Kebersihan", "Lainnya")
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ProdukScreen(viewModel: ProdukViewModel, isAdmin: Boolean, onBackClick: () -> Unit) {
@@ -40,7 +36,6 @@ fun ProdukScreen(viewModel: ProdukViewModel, isAdmin: Boolean, onBackClick: () -
     val editTarget    = viewModel.editTarget.collectAsStateWithLifecycle()
     val actionError   = viewModel.actionError.collectAsStateWithLifecycle()
     val actionSuccess = viewModel.actionSuccess.collectAsStateWithLifecycle()
-    var pill          by remember { mutableStateOf("Semua") }
     var deleteTarget  by remember { mutableStateOf<Produk?>(null) }
     val grad          = if (isAdmin) listOf(Admin, AdminPurple2) else listOf(Teal, Teal2)
 
@@ -81,16 +76,9 @@ fun ProdukScreen(viewModel: ProdukViewModel, isAdmin: Boolean, onBackClick: () -
                         value = query.value, onValueChange = viewModel::onSearchChange,
                         placeholder = { Text("Cari produk...", color = T3) },
                         leadingIcon = { Icon(Icons.Default.Search, null, tint = T3) },
-                        modifier = Modifier.fillMaxWidth().padding(bottom = 12.dp),
+                        modifier = Modifier.fillMaxWidth().padding(bottom = 14.dp),
                         shape = RoundedCornerShape(12.dp), singleLine = true
                     )
-                    Row(modifier = Modifier.fillMaxWidth().horizontalScroll(rememberScrollState()).padding(bottom = 14.dp), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                        pills.forEach { p ->
-                            Surface(shape = RoundedCornerShape(20.dp), color = if (pill == p) Teal else Color.White, modifier = Modifier.clip(RoundedCornerShape(20.dp))) {
-                                Text(p, fontSize = 12.sp, fontWeight = FontWeight.SemiBold, color = if (pill == p) Color.White else T2, modifier = Modifier.padding(horizontal = 14.dp, vertical = 6.dp))
-                            }
-                        }
-                    }
                 }
                 item {
                     when (val s = state.value) {
@@ -99,20 +87,20 @@ fun ProdukScreen(viewModel: ProdukViewModel, isAdmin: Boolean, onBackClick: () -
                         is DataUiState.Error -> ErrorBox(s.message) { viewModel.loadProduk() }
                         is DataUiState.Success -> {
                             val filtered = s.data.filter {
-                                (pill == "Semua" || it.nama.contains(pill, ignoreCase = true)) &&
-                                        it.nama.contains(query.value, ignoreCase = true)
+                                it.nama.contains(query.value, ignoreCase = true)
                             }
                             Row(Modifier.fillMaxWidth().padding(bottom = 12.dp), Arrangement.spacedBy(10.dp)) {
                                 StatCard("Total SKU", "${filtered.size}", "Aktif: ${filtered.count { it.isActive }}", GreenLight, Green, "terdaftar", Modifier.weight(1f))
                                 StatCard("Stok Menipis", "${filtered.count { it.stok < 10 }}", "Perlu restock", RedLight, Danger, "stok < 10", Modifier.weight(1f))
                             }
-                            InfoBox(
-                                icon = if (isAdmin) Icons.Default.Lock else Icons.Default.Info,
-                                iconTint = if (isAdmin) Admin else Teal,
-                                bg = if (isAdmin) AdminLight else Teal3,
-                                text = if (isAdmin) "Admin: tambah, edit, hapus produk. Setiap perubahan stok tercatat di log_produk."
-                                else "Kasir hanya bisa melihat produk (read-only). Sesuai RLS: kasir select produk."
-                            )
+                            if (!isAdmin) {
+                                InfoBox(
+                                    icon = Icons.Default.Info,
+                                    iconTint = Teal,
+                                    bg = Teal3,
+                                    text = "Kasir hanya bisa melihat produk (read-only). Sesuai RLS: kasir select produk."
+                                )
+                            }
                             if (filtered.isEmpty()) EmptyBox("Produk tidak ditemukan", Icons.Default.Inventory)
                             else Card(Modifier.fillMaxWidth(), shape = RoundedCornerShape(16.dp), colors = CardDefaults.cardColors(containerColor = Color.White), elevation = CardDefaults.cardElevation(2.dp)) {
                                 Column {
@@ -216,14 +204,6 @@ private fun ProdukFormSheet(
         HorizontalDivider(color = Teal.copy(alpha = 0.1f))
 
         Column(modifier = Modifier.padding(horizontal = 20.dp, vertical = 18.dp)) {
-            // Info box
-            Surface(modifier = Modifier.fillMaxWidth().padding(bottom = 14.dp), shape = RoundedCornerShape(8.dp), color = AdminLight) {
-                Row(modifier = Modifier.padding(10.dp), horizontalArrangement = Arrangement.spacedBy(8.dp), verticalAlignment = Alignment.Top) {
-                    Icon(Icons.Default.Lock, null, tint = Admin, modifier = Modifier.size(15.dp).padding(top = 1.dp))
-                    Text("Hanya Admin. Kasir tidak bisa tambah/edit/hapus produk (RLS).", fontSize = 11.sp, color = TextMid, lineHeight = 16.sp)
-                }
-            }
-
             // Nama
             Text("NAMA PRODUK *", fontSize = 11.sp, fontWeight = FontWeight.Bold, color = T3, letterSpacing = 0.6.sp, modifier = Modifier.padding(bottom = 6.dp))
             OutlinedTextField(
@@ -260,7 +240,7 @@ private fun ProdukFormSheet(
             Text("IS_ACTIVE", fontSize = 11.sp, fontWeight = FontWeight.Bold, color = T3, letterSpacing = 0.6.sp, modifier = Modifier.padding(bottom = 6.dp))
             ExposedDropdownMenuBox(expanded = expanded, onExpandedChange = { expanded = !expanded }, modifier = Modifier.fillMaxWidth().padding(bottom = 20.dp)) {
                 OutlinedTextField(
-                    value = if (isActive) "true (Aktif)" else "false (Nonaktif)",
+                    value = if (isActive) "Aktif" else "Nonaktif",
                     onValueChange = {}, readOnly = true,
                     trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded) },
                     modifier = Modifier.fillMaxWidth().menuAnchor(),
@@ -314,6 +294,18 @@ private fun ProdukRow(p: Produk, isAdmin: Boolean, onEdit: () -> Unit, onDelete:
                 } else {
                     Text("Stok: ${p.stok.toInt()} pcs", fontSize = 11.sp, color = T3)
                 }
+            }
+            Surface(
+                modifier = Modifier.padding(top = 4.dp),
+                shape = RoundedCornerShape(6.dp),
+                color = if (p.isActive) GreenLight else RedLight
+            ) {
+                Text(
+                    if (p.isActive) "Aktif" else "Nonaktif",
+                    fontSize = 10.sp, fontWeight = FontWeight.SemiBold,
+                    color = if (p.isActive) Green else Danger,
+                    modifier = Modifier.padding(horizontal = 8.dp, vertical = 2.dp)
+                )
             }
         }
         Column(horizontalAlignment = Alignment.End, verticalArrangement = Arrangement.spacedBy(4.dp)) {

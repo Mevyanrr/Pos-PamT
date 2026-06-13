@@ -14,13 +14,13 @@ class ProdukRepository {
 
     suspend fun tambah(nama: String, harga: Double, stok: Double, isActive: Boolean) {
         supabase.postgrest["produk"].insert(
-            mapOf("nama" to nama, "harga" to harga, "stok" to stok, "is_active" to isActive)
+            ProdukPayload(nama, harga, stok, isActive)
         )
     }
 
     suspend fun edit(id: String, nama: String, harga: Double, stok: Double, isActive: Boolean) {
         supabase.postgrest["produk"].update(
-            mapOf("nama" to nama, "harga" to harga, "stok" to stok, "is_active" to isActive)
+            ProdukPayload(nama, harga, stok, isActive)
         ) { filter { eq("id", id) } }
     }
 
