@@ -29,8 +29,9 @@ class PengeluaranViewModel : ViewModel() {
     private val _editTarget = MutableStateFlow<Pengeluaran?>(null)
     val editTarget: StateFlow<Pengeluaran?> = _editTarget
 
-    private val _hapusTarget = MutableStateFlow<Pengeluaran?>(null)
-    val hapusTarget: StateFlow<Pengeluaran?> = _hapusTarget
+    // Ganti hapusTarget → batalTarget
+    private val _batalTarget = MutableStateFlow<Pengeluaran?>(null)
+    val batalTarget: StateFlow<Pengeluaran?> = _batalTarget
 
     private val _formDeskripsi = MutableStateFlow("")
     val formDeskripsi: StateFlow<String> = _formDeskripsi
@@ -184,15 +185,15 @@ class PengeluaranViewModel : ViewModel() {
         }
     }
 
-    fun konfirmasiHapus(p: Pengeluaran) { _hapusTarget.value = p }
-    fun batalKonfirmasiHapus()          { _hapusTarget.value = null }
+    fun konfirmasiBatal(p: Pengeluaran) { _batalTarget.value = p }
+    fun tutupKonfirmasiBatal()          { _batalTarget.value = null }
 
-    fun hapusPengeluaran() {
-        val id = _hapusTarget.value?.id ?: return
+    fun batalkanPengeluaran() {
+        val id = _batalTarget.value?.id ?: return
         viewModelScope.launch {
             try {
-                repo.hapus(id)
-                _hapusTarget.value = null
+                repo.batal(id)
+                _batalTarget.value = null
                 loadPengeluaran()
                 loadLogPengeluaran()
             } catch (_: Exception) {}

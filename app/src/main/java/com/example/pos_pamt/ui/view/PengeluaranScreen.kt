@@ -4,7 +4,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -22,7 +21,6 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.example.pos_pamt.data.Kas
 import com.example.pos_pamt.data.LogPengeluaran
 import com.example.pos_pamt.data.Pengeluaran
 import com.example.pos_pamt.ui.theme.*
@@ -34,12 +32,12 @@ private val tabs = listOf("Semua", "Aktif", "Batal")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PengeluaranScreen(viewModel: PengeluaranViewModel, onBackClick: () -> Unit) {
-    val state        = viewModel.pengeluaranState.collectAsStateWithLifecycle()
-    val logState     = viewModel.logPengeluaranState.collectAsStateWithLifecycle()
-    val filter       = viewModel.filterStatus.collectAsStateWithLifecycle()
-    val showTambah   = viewModel.showTambahForm.collectAsStateWithLifecycle()
-    val showEdit     = viewModel.showEditForm.collectAsStateWithLifecycle()
-    val hapusTarget  = viewModel.hapusTarget.collectAsStateWithLifecycle()
+    val state       = viewModel.pengeluaranState.collectAsStateWithLifecycle()
+    val logState    = viewModel.logPengeluaranState.collectAsStateWithLifecycle()
+    val filter      = viewModel.filterStatus.collectAsStateWithLifecycle()
+    val showTambah  = viewModel.showTambahForm.collectAsStateWithLifecycle()
+    val showEdit    = viewModel.showEditForm.collectAsStateWithLifecycle()
+    val batalTarget = viewModel.batalTarget.collectAsStateWithLifecycle()
 
     Column(modifier = Modifier.fillMaxSize().background(BgPage)) {
         // HEADER
@@ -68,60 +66,64 @@ fun PengeluaranScreen(viewModel: PengeluaranViewModel, onBackClick: () -> Unit) 
             }
         }
 
-        LazyColumn(modifier = Modifier.fillMaxSize().padding(horizontal = 20.dp)) {
-            item { Spacer(Modifier.height(18.dp)) }
-            item {
-                when (val s = state.value) {
-                    is DataUiState.Idle    -> {}
-                    is DataUiState.Loading -> LoadingBox()
-                    is DataUiState.Error   -> ErrorBox(s.message) { viewModel.loadPengeluaran() }
-                    is DataUiState.Success -> {
-                        val all = s.data
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .verticalScroll(rememberScrollState())
+                .padding(horizontal = 20.dp)
+        ) {
+            Spacer(Modifier.height(18.dp))
 
-                        // STAT CARDS
-                        Row(Modifier.fillMaxWidth().padding(bottom = 12.dp), Arrangement.spacedBy(10.dp)) {
-                            StatCard("Total", rupiahD(all.sumOf { it.total }), "bulan ini", RedLight, Danger, "pengeluaran", Modifier.weight(1f))
-                            StatCard("Transaksi", "${all.size}", "${all.count { it.status.equals("batal", true) }} batal", YellowLight, Warn, "tercatat", Modifier.weight(1f))
-                        }
+            when (val s = state.value) {
+                is DataUiState.Idle    -> {}
+                is DataUiState.Loading -> LoadingBox()
+                is DataUiState.Error   -> ErrorBox(s.message) { viewModel.loadPengeluaran() }
+                is DataUiState.Success -> {
+                    val all = s.data
 
-                        // TABS
-                        Row(modifier = Modifier.fillMaxWidth()) {
-                            tabs.forEach { tab ->
-                                val active = filter.value == tab
-                                Column(modifier = Modifier.weight(1f), horizontalAlignment = Alignment.CenterHorizontally) {
-                                    TextButton(onClick = { viewModel.onFilterChange(tab) }, modifier = Modifier.fillMaxWidth()) {
-                                        Text(tab, fontSize = 12.sp, fontWeight = if (active) FontWeight.Bold else FontWeight.Normal, color = if (active) Teal else T3)
-                                    }
-                                    Box(modifier = Modifier.fillMaxWidth().height(2.dp).background(if (active) Teal else Color.Transparent))
+                    // STAT CARDS
+                    Row(Modifier.fillMaxWidth().padding(bottom = 12.dp), Arrangement.spacedBy(10.dp)) {
+                        StatCard("Total", rupiahD(all.filter { !it.status.equals("batal", true) }.sumOf { it.total }), "bulan ini", RedLight, Danger, "pengeluaran", Modifier.weight(1f))
+                        StatCard("Transaksi", "${all.size}", "${all.count { it.status.equals("batal", true) }} batal", YellowLight, Warn, "tercatat", Modifier.weight(1f))
+                    }
+
+                    // TABS
+                    Row(modifier = Modifier.fillMaxWidth()) {
+                        tabs.forEach { tab ->
+                            val active = filter.value == tab
+                            Column(modifier = Modifier.weight(1f), horizontalAlignment = Alignment.CenterHorizontally) {
+                                TextButton(onClick = { viewModel.onFilterChange(tab) }, modifier = Modifier.fillMaxWidth()) {
+                                    Text(tab, fontSize = 12.sp, fontWeight = if (active) FontWeight.Bold else FontWeight.Normal, color = if (active) Teal else T3)
                                 }
+                                Box(modifier = Modifier.fillMaxWidth().height(2.dp).background(if (active) Teal else Color.Transparent))
                             }
                         }
-                        HorizontalDivider(color = Teal.copy(alpha = 0.1f), modifier = Modifier.padding(bottom = 14.dp))
+                    }
+                    HorizontalDivider(color = Teal.copy(alpha = 0.1f), modifier = Modifier.padding(bottom = 14.dp))
 
-                        // LIST
-                        val filtered = when (filter.value) {
-                            "Aktif" -> all.filter { it.status.equals("aktif", true) || it.status.equals("lunas", true) }
-                            "Batal" -> all.filter { it.status.equals("batal", true) }
-                            else    -> all
-                        }
-                        if (filtered.isEmpty()) {
-                            EmptyBox("Tidak ada data pengeluaran", Icons.Default.TrendingDown)
-                        } else {
-                            Card(
-                                Modifier.fillMaxWidth(),
-                                shape     = RoundedCornerShape(16.dp),
-                                colors    = CardDefaults.cardColors(containerColor = Color.White),
-                                elevation = CardDefaults.cardElevation(2.dp)
-                            ) {
-                                Column {
-                                    filtered.forEachIndexed { idx, pen ->
-                                        PengeluaranRow(
-                                            p      = pen,
-                                            onEdit = { viewModel.openEditForm(pen) },
-                                            onHapus = { viewModel.konfirmasiHapus(pen) }
-                                        )
-                                        if (idx != filtered.lastIndex) HorizontalDivider(color = Admin.copy(alpha = 0.07f), thickness = 0.5.dp)
-                                    }
+                    // LIST
+                    val filtered = when (filter.value) {
+                        "Aktif" -> all.filter { it.status.equals("aktif", true) || it.status.equals("lunas", true) }
+                        "Batal" -> all.filter { it.status.equals("batal", true) }
+                        else    -> all
+                    }
+                    if (filtered.isEmpty()) {
+                        EmptyBox("Tidak ada data pengeluaran", Icons.Default.TrendingDown)
+                    } else {
+                        Card(
+                            Modifier.fillMaxWidth(),
+                            shape     = RoundedCornerShape(16.dp),
+                            colors    = CardDefaults.cardColors(containerColor = Color.White),
+                            elevation = CardDefaults.cardElevation(2.dp)
+                        ) {
+                            Column {
+                                filtered.forEachIndexed { idx, pen ->
+                                    PengeluaranRow(
+                                        p        = pen,
+                                        onEdit   = { viewModel.openEditForm(pen) },
+                                        onBatal  = { viewModel.konfirmasiBatal(pen) }
+                                    )
+                                    if (idx != filtered.lastIndex) HorizontalDivider(color = Admin.copy(alpha = 0.07f), thickness = 0.5.dp)
                                 }
                             }
                         }
@@ -129,59 +131,59 @@ fun PengeluaranScreen(viewModel: PengeluaranViewModel, onBackClick: () -> Unit) 
                 }
             }
 
-            item { SectionLabel("Log Pengeluaran", top = 18) }
-            item {
-                when (val l = logState.value) {
-                    is DataUiState.Idle    -> {}
-                    is DataUiState.Loading -> SmallLoading()
-                    is DataUiState.Error   -> Text("Gagal memuat log: ${l.message}", fontSize = 11.sp, color = Danger)
-                    is DataUiState.Success -> {
-                        if (l.data.isEmpty()) {
-                            Text("Belum ada log pengeluaran.", fontSize = 12.sp, color = T3, modifier = Modifier.padding(vertical = 8.dp))
-                        } else {
-                            Card(
-                                Modifier.fillMaxWidth(),
-                                shape     = RoundedCornerShape(16.dp),
-                                colors    = CardDefaults.cardColors(containerColor = Color.White),
-                                elevation = CardDefaults.cardElevation(2.dp)
-                            ) {
-                                Column {
-                                    l.data.forEachIndexed { idx, log ->
-                                        PengeluaranLogRow(log)
-                                        if (idx != l.data.lastIndex) HorizontalDivider(color = Admin.copy(alpha = 0.07f), thickness = 0.5.dp)
-                                    }
+            SectionLabel("Log Pengeluaran", top = 18)
+
+            when (val l = logState.value) {
+                is DataUiState.Idle    -> {}
+                is DataUiState.Loading -> SmallLoading()
+                is DataUiState.Error   -> Text("Gagal memuat log: ${l.message}", fontSize = 11.sp, color = Danger)
+                is DataUiState.Success -> {
+                    if (l.data.isEmpty()) {
+                        Text("Belum ada log pengeluaran.", fontSize = 12.sp, color = T3, modifier = Modifier.padding(vertical = 8.dp))
+                    } else {
+                        Card(
+                            Modifier.fillMaxWidth(),
+                            shape     = RoundedCornerShape(16.dp),
+                            colors    = CardDefaults.cardColors(containerColor = Color.White),
+                            elevation = CardDefaults.cardElevation(2.dp)
+                        ) {
+                            Column {
+                                l.data.forEachIndexed { idx, log ->
+                                    PengeluaranLogRow(log)
+                                    if (idx != l.data.lastIndex) HorizontalDivider(color = Admin.copy(alpha = 0.07f), thickness = 0.5.dp)
                                 }
                             }
                         }
                     }
                 }
             }
-            item { Spacer(Modifier.height(20.dp)) }
+
+            Spacer(Modifier.height(20.dp))
         }
     }
 
-    // DIALOG KONFIRMASI HAPUS
-    hapusTarget.value?.let { pen ->
+    // DIALOG KONFIRMASI BATALKAN
+    batalTarget.value?.let { pen ->
         AlertDialog(
-            onDismissRequest = { viewModel.batalKonfirmasiHapus() },
-            icon             = { Icon(Icons.Default.Delete, null, tint = Danger) },
-            title            = { Text("Hapus Pengeluaran", fontWeight = FontWeight.Bold) },
+            onDismissRequest = { viewModel.tutupKonfirmasiBatal() },
+            icon             = { Icon(Icons.Default.Block, null, tint = Warn) },
+            title            = { Text("Batalkan Pengeluaran", fontWeight = FontWeight.Bold) },
             text             = {
                 Text(
-                    "Yakin ingin menghapus permanen \"${pen.deskripsi}\"? " +
-                            "Data tidak dapat dikembalikan.",
+                    "Yakin ingin membatalkan \"${pen.deskripsi}\"? " +
+                            "Saldo kas akan dikembalikan dan status berubah menjadi Batal.",
                     fontSize = 14.sp
                 )
             },
-            confirmButton    = {
+            confirmButton = {
                 Button(
-                    onClick = { viewModel.hapusPengeluaran() },
-                    colors  = ButtonDefaults.buttonColors(containerColor = Danger)
-                ) { Text("Hapus", fontWeight = FontWeight.Bold) }
+                    onClick = { viewModel.batalkanPengeluaran() },
+                    colors  = ButtonDefaults.buttonColors(containerColor = Warn)
+                ) { Text("Ya, Batalkan", fontWeight = FontWeight.Bold) }
             },
-            dismissButton    = {
-                OutlinedButton(onClick = { viewModel.batalKonfirmasiHapus() }) {
-                    Text("Batal")
+            dismissButton = {
+                OutlinedButton(onClick = { viewModel.tutupKonfirmasiBatal() }) {
+                    Text("Tidak")
                 }
             }
         )
@@ -321,7 +323,7 @@ private fun PengeluaranFormSheet(
                 } else {
                     Icon(Icons.Default.TrendingDown, null, modifier = Modifier.size(18.dp))
                     Spacer(Modifier.width(8.dp))
-                    Text("$submitLabel (201)", fontSize = 14.sp, fontWeight = FontWeight.Bold)
+                    Text(submitLabel, fontSize = 14.sp, fontWeight = FontWeight.Bold)
                 }
             }
 
@@ -412,7 +414,7 @@ private fun FormDropdown(
 
 // ROW ITEM
 @Composable
-private fun PengeluaranRow(p: Pengeluaran, onEdit: () -> Unit, onHapus: () -> Unit) {
+private fun PengeluaranRow(p: Pengeluaran, onEdit: () -> Unit, onBatal: () -> Unit) {
     val isAktif = p.status.equals("aktif", true) || p.status.equals("lunas", true)
     Row(
         modifier              = Modifier.padding(horizontal = 16.dp, vertical = 12.dp),
@@ -440,8 +442,11 @@ private fun PengeluaranRow(p: Pengeluaran, onEdit: () -> Unit, onHapus: () -> Un
         Column(horizontalAlignment = Alignment.End, verticalArrangement = Arrangement.spacedBy(4.dp)) {
             Text("−${rupiahD(p.total)}", fontSize = 13.sp, fontWeight = FontWeight.Bold, color = if (isAktif) Danger else T3)
             Row(horizontalArrangement = Arrangement.spacedBy(4.dp)) {
-                SmallIconBtn(Icons.Default.Edit,   AdminLight, Admin,  onClick = onEdit)
-                SmallIconBtn(Icons.Default.Delete, RedLight,   Danger, onClick = onHapus)
+                SmallIconBtn(Icons.Default.Edit,  AdminLight, Admin, onClick = onEdit)
+                // Tombol batal hanya muncul kalau statusnya masih aktif
+                if (isAktif) {
+                    SmallIconBtn(Icons.Default.Block, YellowLight, Warn, onClick = onBatal)
+                }
             }
         }
     }
