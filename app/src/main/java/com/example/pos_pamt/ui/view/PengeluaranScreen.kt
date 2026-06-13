@@ -432,6 +432,7 @@ private fun PengeluaranRow(p: Pengeluaran, onEdit: () -> Unit, onBatal: () -> Un
                 modifier = Modifier.size(20.dp)
             )
         }
+
         Column(modifier = Modifier.weight(1f)) {
             Text(p.deskripsi.ifEmpty { "Tanpa deskripsi" }, fontSize = 13.sp, fontWeight = FontWeight.SemiBold, color = TDark, maxLines = 1)
             Row(modifier = Modifier.padding(top = 1.dp)) {
@@ -439,13 +440,37 @@ private fun PengeluaranRow(p: Pengeluaran, onEdit: () -> Unit, onBatal: () -> Un
                 Text(p.status.replaceFirstChar { it.uppercase() }, fontSize = 11.sp, fontWeight = FontWeight.SemiBold, color = if (isAktif) Green else Danger)
             }
         }
-        Column(horizontalAlignment = Alignment.End, verticalArrangement = Arrangement.spacedBy(4.dp)) {
+
+        // Harga + tombol aksi (FIXED)
+        Column(horizontalAlignment = Alignment.End, verticalArrangement = Arrangement.spacedBy(2.dp)) {
             Text("−${rupiahD(p.total)}", fontSize = 13.sp, fontWeight = FontWeight.Bold, color = if (isAktif) Danger else T3)
-            Row(horizontalArrangement = Arrangement.spacedBy(4.dp)) {
-                SmallIconBtn(Icons.Default.Edit,  AdminLight, Admin, onClick = onEdit)
-                // Tombol batal hanya muncul kalau statusnya masih aktif
+
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(0.dp),
+                verticalAlignment     = Alignment.CenterVertically
+            ) {
+                // Tombol Edit
+                IconButton(
+                    onClick  = onEdit,
+                    modifier = Modifier.size(32.dp)
+                ) {
+                    Icon(Icons.Default.Edit, contentDescription = "Edit", tint = Admin, modifier = Modifier.size(17.dp))
+                }
+
+                // Tombol Batal — hanya muncul kalau masih aktif
                 if (isAktif) {
-                    SmallIconBtn(Icons.Default.Block, YellowLight, Warn, onClick = onBatal)
+                    Box(
+                        modifier = Modifier
+                            .height(16.dp)
+                            .width(1.dp)
+                            .background(Admin.copy(alpha = 0.15f))
+                    )
+                    IconButton(
+                        onClick  = onBatal,
+                        modifier = Modifier.size(32.dp)
+                    ) {
+                        Icon(Icons.Default.Block, contentDescription = "Batal", tint = Warn, modifier = Modifier.size(17.dp))
+                    }
                 }
             }
         }

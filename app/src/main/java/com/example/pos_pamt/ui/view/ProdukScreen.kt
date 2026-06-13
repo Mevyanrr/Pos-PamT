@@ -98,7 +98,7 @@ fun ProdukScreen(viewModel: ProdukViewModel, isAdmin: Boolean, onBackClick: () -
                                     icon = Icons.Default.Info,
                                     iconTint = Teal,
                                     bg = Teal3,
-                                    text = "Kasir hanya bisa melihat produk (read-only). Sesuai RLS: kasir select produk."
+                                    text = "Kasir hanya bisa melihat produk."
                                 )
                             }
                             if (filtered.isEmpty()) EmptyBox("Produk tidak ditemukan", Icons.Default.Inventory)
@@ -204,7 +204,6 @@ private fun ProdukFormSheet(
         HorizontalDivider(color = Teal.copy(alpha = 0.1f))
 
         Column(modifier = Modifier.padding(horizontal = 20.dp, vertical = 18.dp)) {
-            // Nama
             Text("NAMA PRODUK *", fontSize = 11.sp, fontWeight = FontWeight.Bold, color = T3, letterSpacing = 0.6.sp, modifier = Modifier.padding(bottom = 6.dp))
             OutlinedTextField(
                 value = nama, onValueChange = { nama = it },
@@ -214,7 +213,6 @@ private fun ProdukFormSheet(
                 colors = OutlinedTextFieldDefaults.colors(focusedBorderColor = Teal, unfocusedBorderColor = Teal.copy(alpha = 0.2f))
             )
 
-            // Harga
             Text("HARGA (RP) *", fontSize = 11.sp, fontWeight = FontWeight.Bold, color = T3, letterSpacing = 0.6.sp, modifier = Modifier.padding(bottom = 6.dp))
             OutlinedTextField(
                 value = harga, onValueChange = { harga = it.filter { c -> c.isDigit() } },
@@ -225,7 +223,6 @@ private fun ProdukFormSheet(
                 colors = OutlinedTextFieldDefaults.colors(focusedBorderColor = Teal, unfocusedBorderColor = Teal.copy(alpha = 0.2f))
             )
 
-            // Stok
             Text("STOK *", fontSize = 11.sp, fontWeight = FontWeight.Bold, color = T3, letterSpacing = 0.6.sp, modifier = Modifier.padding(bottom = 6.dp))
             OutlinedTextField(
                 value = stok, onValueChange = { stok = it.filter { c -> c.isDigit() } },
@@ -236,7 +233,6 @@ private fun ProdukFormSheet(
                 colors = OutlinedTextFieldDefaults.colors(focusedBorderColor = Teal, unfocusedBorderColor = Teal.copy(alpha = 0.2f))
             )
 
-            // is_active
             Text("IS_ACTIVE", fontSize = 11.sp, fontWeight = FontWeight.Bold, color = T3, letterSpacing = 0.6.sp, modifier = Modifier.padding(bottom = 6.dp))
             ExposedDropdownMenuBox(expanded = expanded, onExpandedChange = { expanded = !expanded }, modifier = Modifier.fillMaxWidth().padding(bottom = 20.dp)) {
                 OutlinedTextField(
@@ -281,13 +277,31 @@ private fun ProdukFormSheet(
 
 @Composable
 private fun ProdukRow(p: Produk, isAdmin: Boolean, onEdit: () -> Unit, onDelete: () -> Unit) {
-    Row(modifier = Modifier.padding(horizontal = 16.dp, vertical = 12.dp), verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-        Box(modifier = Modifier.size(42.dp).clip(RoundedCornerShape(10.dp)).background(Teal3), contentAlignment = Alignment.Center) {
+    Row(
+        modifier = Modifier
+            .padding(horizontal = 16.dp, vertical = 12.dp),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(12.dp)
+    ) {
+        // Ikon produk
+        Box(
+            modifier = Modifier
+                .size(42.dp)
+                .clip(RoundedCornerShape(10.dp))
+                .background(Teal3),
+            contentAlignment = Alignment.Center
+        ) {
             Icon(Icons.Default.Inventory, null, tint = Teal, modifier = Modifier.size(22.dp))
         }
+
+        // Info produk
         Column(modifier = Modifier.weight(1f)) {
             Text(p.nama, fontSize = 13.sp, fontWeight = FontWeight.SemiBold, color = TDark)
-            Row(modifier = Modifier.padding(top = 2.dp), verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(4.dp)) {
+            Row(
+                modifier = Modifier.padding(top = 2.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(4.dp)
+            ) {
                 if (p.stok < 10) {
                     Icon(Icons.Default.Warning, null, tint = Danger, modifier = Modifier.size(12.dp))
                     Text("Stok: ${p.stok.toInt()} pcs · menipis!", fontSize = 11.sp, color = Danger, fontWeight = FontWeight.SemiBold)
@@ -308,11 +322,55 @@ private fun ProdukRow(p: Produk, isAdmin: Boolean, onEdit: () -> Unit, onDelete:
                 )
             }
         }
-        Column(horizontalAlignment = Alignment.End, verticalArrangement = Arrangement.spacedBy(4.dp)) {
-            Text("Rp ${"%,.0f".format(p.harga).replace(',', '.')}", fontSize = 12.sp, fontWeight = FontWeight.Bold, color = Teal)
-            if (isAdmin) Row(horizontalArrangement = Arrangement.spacedBy(4.dp)) {
-                SmallIconBtn(Icons.Default.Edit, Teal3, Teal, onClick = onEdit)
-                SmallIconBtn(Icons.Default.Delete, RedLight, Danger, onClick = onDelete)
+
+        // Harga + tombol aksi
+        Column(
+            horizontalAlignment = Alignment.End,
+            verticalArrangement = Arrangement.spacedBy(2.dp)
+        ) {
+            Text(
+                "Rp ${"%,.0f".format(p.harga).replace(',', '.')}",
+                fontSize = 12.sp,
+                fontWeight = FontWeight.Bold,
+                color = Teal
+            )
+            if (isAdmin) {
+                Row(
+                    horizontalArrangement = Arrangement.spacedBy(0.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    // Tombol Edit — icon kecil, tanpa background kotak besar
+                    IconButton(
+                        onClick = onEdit,
+                        modifier = Modifier.size(32.dp)
+                    ) {
+                        Icon(
+                            Icons.Default.Edit,
+                            contentDescription = "Edit",
+                            tint = Teal,
+                            modifier = Modifier.size(17.dp)
+                        )
+                    }
+                    // Divider
+                    Box(
+                        modifier = Modifier
+                            .height(16.dp)
+                            .width(1.dp)
+                            .background(Teal.copy(alpha = 0.15f))
+                    )
+                    // Tombol Hapus
+                    IconButton(
+                        onClick = onDelete,
+                        modifier = Modifier.size(32.dp)
+                    ) {
+                        Icon(
+                            Icons.Default.Delete,
+                            contentDescription = "Hapus",
+                            tint = Danger,
+                            modifier = Modifier.size(17.dp)
+                        )
+                    }
+                }
             }
         }
     }
@@ -325,7 +383,11 @@ private fun LogProdukRow(log: LogProduk) {
         log.aktivitas.contains("hapus", true) || log.aktivitas.contains("terjual", true) -> Danger
         else -> Warn
     }
-    Row(modifier = Modifier.padding(horizontal = 16.dp, vertical = 11.dp), horizontalArrangement = Arrangement.spacedBy(10.dp), verticalAlignment = Alignment.Top) {
+    Row(
+        modifier = Modifier.padding(horizontal = 16.dp, vertical = 11.dp),
+        horizontalArrangement = Arrangement.spacedBy(10.dp),
+        verticalAlignment = Alignment.Top
+    ) {
         Box(modifier = Modifier.padding(top = 5.dp).size(8.dp).clip(CircleShape).background(dot))
         Column {
             Text("produk_id: ${log.produkId.take(8)}… — aktivitas: ${log.aktivitas}", fontSize = 12.sp, color = TextMid, lineHeight = 18.sp)
