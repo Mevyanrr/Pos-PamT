@@ -65,21 +65,6 @@ fun ProfilScreen(
                 ProfilStatCard("Rp 3.8M", "Total\nPenjualan", GreenLight, Green, Modifier.weight(1f))
             }
 
-            // ADMIN: lihat semua profiles (RLS: admin lihat semua profiles)
-            if (isAdmin) {
-                SectionLabel("Semua Profiles (Admin View)", top = 18)
-                InfoBox(Icons.Default.Lock, Admin, Admin2, "Admin dapat melihat semua profil (RLS: admin lihat semua profiles). Kasir hanya lihat profil sendiri (id = auth.uid()).")
-                Card(Modifier.fillMaxWidth(), shape = RoundedCornerShape(16.dp), colors = CardDefaults.cardColors(containerColor = Color.White), elevation = CardDefaults.cardElevation(2.dp)) {
-                    Column {
-                        ProfilesRow("MN", Admin2, Admin, "Mevya Najwa R", "admin@gmail.com", "Admin", Admin)
-                        HorizontalDivider(color = Teal.copy(alpha = 0.07f), thickness = 0.5.dp)
-                        ProfilesRow("FH", Teal3, Teal, "Flora Hapsari M", "flora.kasir@gmail.com", "Kasir", Teal)
-                        HorizontalDivider(color = Teal.copy(alpha = 0.07f), thickness = 0.5.dp)
-                        ProfilesRow("SY", GreenLight, Green, "Syumaylah", "syumaylah@gmail.com", "Kasir", Teal)
-                    }
-                }
-            }
-
             // INFO AKUN
             SectionLabel("Info Akun", top = 18)
             Card(Modifier.fillMaxWidth(), shape = RoundedCornerShape(16.dp), colors = CardDefaults.cardColors(containerColor = Color.White), elevation = CardDefaults.cardElevation(2.dp)) {
