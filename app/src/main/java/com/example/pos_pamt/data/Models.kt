@@ -4,16 +4,6 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class Barang(
-    val id : String  = "",
-    val nama : String  = "",
-    val harga : Double  = 0.0,
-    val stok : Double  = 0.0,
-    @SerialName("is_active")
-    val isActive: Boolean = true
-)
-
-@Serializable
 data class Kas(
     val id : String  = "",
     @SerialName("nama_kas")
