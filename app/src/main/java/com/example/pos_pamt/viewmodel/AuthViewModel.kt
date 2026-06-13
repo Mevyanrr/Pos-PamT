@@ -59,9 +59,11 @@ class AuthViewModel : ViewModel() {
     private fun loadUserSession() {
         viewModelScope.launch {
             val profile = repository.getCurrentProfile()
+            val userId  = repository.getCurrentUserId()
             _userSession.value = UserSession(
-                nama  = profile?.username ?: "",
-                role  = when (profile?.role?.lowercase()) {
+                id   = userId ?: "",
+                nama = profile?.username ?: "",
+                role = when (profile?.role?.lowercase()) {
                     "admin" -> UserRole.Admin
                     else    -> UserRole.Kasir
                 }

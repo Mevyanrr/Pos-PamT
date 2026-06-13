@@ -135,11 +135,10 @@ fun ProfilScreen(
 
 @Composable private fun ProfilStatCard(value: String, label: String, bg: Color, textColor: Color, modifier: Modifier) {
     Card(modifier = modifier, shape = RoundedCornerShape(12.dp), colors = CardDefaults.cardColors(containerColor = Color.White), elevation = CardDefaults.cardElevation(2.dp)) {
-        Column(modifier = Modifier.padding(14.dp), horizontalAlignment = Alignment.CenterHorizontally) {
-            Box(modifier = Modifier.size(40.dp).clip(CircleShape).background(bg), contentAlignment = Alignment.Center) {
-                Text(value, fontSize = 12.sp, fontWeight = FontWeight.Bold, color = textColor)
-            }
-            Text(label, fontSize = 10.sp, color = TextLight, modifier = Modifier.padding(top = 6.dp), lineHeight = 14.sp)
+        Column(modifier = Modifier.padding(14.dp)) {
+            Text(label.uppercase(), fontSize = 10.sp, color = TextLight, fontWeight = FontWeight.SemiBold, letterSpacing = 0.6.sp)
+            Text(value, fontSize = 21.sp, fontWeight = FontWeight.Bold, color = TextDark, modifier = Modifier.padding(top = 5.dp))
+            Text("bulan ini", fontSize = 10.sp, color = TextLight, modifier = Modifier.padding(top = 4.dp))
         }
     }
 }

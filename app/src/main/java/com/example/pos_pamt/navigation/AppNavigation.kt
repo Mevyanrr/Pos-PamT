@@ -69,9 +69,9 @@ fun MainNavHost(authViewModel: AuthViewModel, startDestination: String) {
             composable(Screen.Login.route) {
                 LoginScreen(
                     email = email.value, password = password.value, uiState = uiState.value,
-                    onEmailChange = authViewModel::onEmailChange,
+                    onEmailChange    = authViewModel::onEmailChange,
                     onPasswordChange = authViewModel::onPasswordChange,
-                    onLoginClick = { authViewModel.login() }
+                    onLoginClick     = { authViewModel.login() }
                 )
             }
 
@@ -113,7 +113,12 @@ fun MainNavHost(authViewModel: AuthViewModel, startDestination: String) {
 
             composable(Screen.Transaksi.route) {
                 val vm: PenjualanViewModel = viewModel()
-                TransaksiScreen(viewModel = vm, isAdmin = isAdmin, onBackClick = { navController.popBackStack() })
+                TransaksiScreen(
+                    viewModel   = vm,
+                    isAdmin     = isAdmin,
+                    kasirId     = userSession.value.id,
+                    onBackClick = { navController.popBackStack() }
+                )
             }
 
             composable(Screen.Profil.route) {

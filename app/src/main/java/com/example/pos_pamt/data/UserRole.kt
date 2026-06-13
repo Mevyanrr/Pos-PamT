@@ -6,6 +6,7 @@ sealed class UserRole {
 }
 
 data class UserSession(
+    val id    : String   = "",
     val email : String   = "",
     val role  : UserRole = UserRole.Kasir,
     val nama  : String   = ""

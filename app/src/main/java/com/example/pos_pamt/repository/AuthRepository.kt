@@ -36,4 +36,8 @@ class AuthRepository {
                 .decodeSingleOrNull<ProfileRow>()
         } catch (e: Exception) { null }
     }
+
+    fun getCurrentUserId(): String? {
+        return supabase.auth.currentSessionOrNull()?.user?.id
+    }
 }
