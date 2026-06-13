@@ -112,14 +112,14 @@ data class Pengeluaran(
 
 @Serializable
 data class LogKas(
-    val id                                              : String = "",
-    @SerialName("kas_id")       val kasId              : String = "",
-    val tipe                                            : String = "",
-    @SerialName("saldo_awal")   val saldoAwal          : Double = 0.0,
-    @SerialName("saldo_akhir")  val saldoAkhir         : Double = 0.0,
-    val perubahan                                       : Double = 0.0,
-    val keterangan                                      : String = "",
-    @SerialName("created_at")   val createdAt          : String = ""
+    val id : String = "",
+    @SerialName("kas_id") val kasId : String = "",
+    val tipe  : String = "",
+    @SerialName("saldo_awal") val saldoAwal: Double = 0.0,
+    @SerialName("saldo_akhir") val saldoAkhir : Double = 0.0,
+    val perubahan : Double = 0.0,
+    val keterangan : String = "",
+    @SerialName("created_at") val createdAt : String = ""
 )
 
 @Serializable
