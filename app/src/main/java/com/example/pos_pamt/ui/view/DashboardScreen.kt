@@ -16,6 +16,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import com.example.pos_pamt.ui.theme.*
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -23,18 +24,6 @@ import androidx.compose.ui.unit.sp
 import com.example.pos_pamt.data.UserRole
 import com.example.pos_pamt.data.UserSession
 
-private val Teal  = Color(0xFF00B5A3)
-private val Teal2 = Color(0xFF00CDB9)
-private val Teal3 = Color(0xFFE0FAF7)
-private val Admin = Color(0xFF6366F1)
-private val TDark = Color(0xFF0D2B2A)
-private val T2    = Color(0xFF3D6360)
-private val T3    = Color(0xFF8AB5B1)
-private val Green = Color(0xFF14A97A)
-private val Danger= Color(0xFFEF4444)
-private val Warn  = Color(0xFFF59E0B)
-private val White = Color(0xFFFFFFFF)
-private val Bg    = Color(0xFFF2F6F8)
 
 data class QItem(val icon: ImageVector, val bg: Color, val tint: Color, val label: String, val onClick: () -> Unit)
 
@@ -50,7 +39,7 @@ fun DashboardScreen(
     onNavigateToProfil      : () -> Unit
 ) {
     val isAdmin    = userSession.role is UserRole.Admin
-    val grad       = if (isAdmin) listOf(Admin, Color(0xFF818CF8)) else listOf(Teal, Teal2)
+    val grad       = if (isAdmin) listOf(Admin, AdminPurple2) else listOf(Teal, Teal2)
     val roleName   = if (isAdmin) "Admin" else "Kasir"
     val inisial    = userSession.nama.take(2).uppercase().ifEmpty { roleName.take(2) }
 
@@ -72,8 +61,8 @@ fun DashboardScreen(
                         }
                         Surface(shape = RoundedCornerShape(20.dp), color = Color.White.copy(alpha = 0.18f)) {
                             Row(modifier = Modifier.padding(horizontal = 10.dp, vertical = 3.dp), verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(5.dp)) {
-                                Box(modifier = Modifier.size(7.dp).clip(CircleShape).background(Color(0xFFA7F3D0)))
-                                Text("Online", fontSize = 11.sp, fontWeight = FontWeight.SemiBold, color = Color(0xFFA7F3D0))
+                                Box(modifier = Modifier.size(7.dp).clip(CircleShape).background(OnlineGreen))
+                                Text("Online", fontSize = 11.sp, fontWeight = FontWeight.SemiBold, color = OnlineGreen)
                             }
                         }
                     }
@@ -100,25 +89,25 @@ fun DashboardScreen(
             SectionLabel(if (isAdmin) "Menu Admin" else "Menu Kasir", top = 20)
             val kasirItems = listOf(
                 QItem(Icons.Default.Receipt, Teal3, Teal, "Transaksi\nBaru", onNavigateToTransaksi),
-                QItem(Icons.Default.History, Color(0xFFEDE9FE), Color(0xFF7C3AED), "Riwayat", onNavigateToTransaksi),
-                QItem(Icons.Default.People, Color(0xFFFEF3C7), Color(0xFFD97706), "Pelanggan", onNavigateToPelanggan),
-                QItem(Icons.Default.Inventory, Color(0xFFDCFCE7), Color(0xFF16A34A), "Produk", onNavigateToProduk)
+                QItem(Icons.Default.History, AdminLight, AdminPurple, "Riwayat", onNavigateToTransaksi),
+                QItem(Icons.Default.People, YellowLight, WarnDark, "Pelanggan", onNavigateToPelanggan),
+                QItem(Icons.Default.Inventory, GreenLight, SuccessAlt, "Produk", onNavigateToProduk)
             )
             val adminItems = listOf(
-                QItem(Icons.Default.AccountBalance, Color(0xFFDBEAFE), Color(0xFF2563EB), "Kas", onNavigateToKas),
-                QItem(Icons.Default.TrendingDown, Color(0xFFFEE2E2), Color(0xFFDC2626), "Pengeluaran", onNavigateToPengeluaran),
-                QItem(Icons.Default.Inventory, Color(0xFFDCFCE7), Color(0xFF16A34A), "Produk", onNavigateToProduk),
-                QItem(Icons.Default.ReceiptLong, Color(0xFFEDE9FE), Color(0xFF7C3AED), "Semua\nTransaksi", onNavigateToTransaksi),
-                QItem(Icons.Default.People, Color(0xFFFEF3C7), Color(0xFFD97706), "Pelanggan", onNavigateToPelanggan),
-                QItem(Icons.Default.ManageAccounts, Color(0xFFE0F2FE), Color(0xFF0284C7), "Profiles", onNavigateToProfil)
+                QItem(Icons.Default.AccountBalance, BlueLight, BluePrimary, "Kas", onNavigateToKas),
+                QItem(Icons.Default.TrendingDown, RedLight, DangerDark, "Pengeluaran", onNavigateToPengeluaran),
+                QItem(Icons.Default.Inventory, GreenLight, SuccessAlt, "Produk", onNavigateToProduk),
+                QItem(Icons.Default.ReceiptLong, AdminLight, AdminPurple, "Semua\nTransaksi", onNavigateToTransaksi),
+                QItem(Icons.Default.People, YellowLight, WarnDark, "Pelanggan", onNavigateToPelanggan),
+                QItem(Icons.Default.ManageAccounts, BlueLight2, BlueDeep, "Profiles", onNavigateToProfil)
             )
             QuickGrid(if (isAdmin) adminItems else kasirItems)
 
             // STATISTIK
             SectionLabel("Statistik Hari Ini", top = 18)
             Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(10.dp)) {
-                StatCard("Penjualan", "Rp 830K", "↑ 14%", Color(0xFFDCFCE7), Green, "vs kemarin", Modifier.weight(1f))
-                StatCard("Pengeluaran", "Rp 400K", "↓ 5%", Color(0xFFFEE2E2), Danger, "vs kemarin", Modifier.weight(1f))
+                StatCard("Penjualan", "Rp 830K", "↑ 14%", GreenLight, Green, "vs kemarin", Modifier.weight(1f))
+                StatCard("Pengeluaran", "Rp 400K", "↓ 5%", RedLight, Danger, "vs kemarin", Modifier.weight(1f))
             }
 
             // TRANSAKSI TERAKHIR
@@ -130,11 +119,11 @@ fun DashboardScreen(
                         TextButton(onClick = onNavigateToTransaksi) { Text("Lihat semua", fontSize = 12.sp, color = Teal, fontWeight = FontWeight.SemiBold) }
                     }
                     HorizontalDivider(color = Teal.copy(alpha = 0.08f))
-                    TrxRow(Icons.Default.ArrowDownward, Color(0xFFDCFCE7), Green, "Budi Santoso", "Paracetamol×2, Vitamin C×1 · 09:12", "+Rp 83K", Green)
+                    TrxRow(Icons.Default.ArrowDownward, GreenLight, Green, "Budi Santoso", "Paracetamol×2, Vitamin C×1 · 09:12", "+Rp 83K", Green)
                     HorizontalDivider(color = Teal.copy(alpha = 0.07f), thickness = 0.5.dp)
-                    TrxRow(Icons.Default.ArrowDownward, Color(0xFFDCFCE7), Green, "Siti Rahayu", "Minyak Goreng 2L×3 · 08:40", "+Rp 144K", Green)
+                    TrxRow(Icons.Default.ArrowDownward, GreenLight, Green, "Siti Rahayu", "Minyak Goreng 2L×3 · 08:40", "+Rp 144K", Green)
                     HorizontalDivider(color = Teal.copy(alpha = 0.07f), thickness = 0.5.dp)
-                    TrxRow(Icons.Default.ArrowUpward, Color(0xFFFEE2E2), Danger, "Bayar Listrik April", "Pengeluaran · 08:00", "−Rp 400K", Danger)
+                    TrxRow(Icons.Default.ArrowUpward, RedLight, Danger, "Bayar Listrik April", "Pengeluaran · 08:00", "−Rp 400K", Danger)
                 }
             }
 
@@ -165,7 +154,7 @@ fun DashboardScreen(
                                 Icon(item.icon, null, tint = item.tint, modifier = Modifier.size(20.dp))
                             }
                             Spacer(Modifier.height(7.dp))
-                            Text(item.label, fontSize = 10.sp, fontWeight = FontWeight.SemiBold, color = Color(0xFF3D6360), lineHeight = 13.sp, modifier = Modifier.fillMaxWidth().wrapContentWidth(Alignment.CenterHorizontally))
+                            Text(item.label, fontSize = 10.sp, fontWeight = FontWeight.SemiBold, color = TextMid, lineHeight = 13.sp, modifier = Modifier.fillMaxWidth().wrapContentWidth(Alignment.CenterHorizontally))
                         }
                     }
                 }
@@ -176,10 +165,10 @@ fun DashboardScreen(
 }
 
 @Composable internal fun SectionLabel(text: String, top: Int = 0) {
-    Text(text, fontSize = 11.sp, fontWeight = FontWeight.SemiBold, color = Color(0xFF8AB5B1), letterSpacing = 0.8.sp, modifier = Modifier.padding(top = top.dp, bottom = 12.dp))
+    Text(text, fontSize = 11.sp, fontWeight = FontWeight.SemiBold, color = TextLight, letterSpacing = 0.8.sp, modifier = Modifier.padding(top = top.dp, bottom = 12.dp))
 }
 
 @Composable private fun KStat(v: String, l: String) = Column(horizontalAlignment = Alignment.CenterHorizontally) { Text(v, fontSize = 14.sp, fontWeight = FontWeight.Bold, color = Color.White); Text(l, fontSize = 10.sp, color = Color.White.copy(alpha = 0.65f)) }
-@Composable internal fun StatCard(label: String, value: String, badge: String, bc: Color, btc: Color, sub: String, modifier: Modifier) { Card(modifier = modifier, shape = RoundedCornerShape(12.dp), colors = CardDefaults.cardColors(containerColor = Color.White), elevation = CardDefaults.cardElevation(2.dp)) { Column(modifier = Modifier.padding(14.dp)) { Text(label, fontSize = 10.sp, color = Color(0xFF8AB5B1), letterSpacing = 0.6.sp, fontWeight = FontWeight.SemiBold); Text(value, fontSize = 21.sp, fontWeight = FontWeight.Bold, color = Color(0xFF0D2B2A), modifier = Modifier.padding(top = 5.dp)); Row(modifier = Modifier.padding(top = 4.dp), verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(4.dp)) { Surface(shape = RoundedCornerShape(10.dp), color = bc) { Text(badge, fontSize = 10.sp, fontWeight = FontWeight.SemiBold, color = btc, modifier = Modifier.padding(horizontal = 8.dp, vertical = 2.dp)) }; Text(sub, fontSize = 10.sp, color = Color(0xFF8AB5B1)) } } } }
-@Composable internal fun TrxRow(icon: ImageVector, iconBg: Color, iconTint: Color, name: String, sub: String, amt: String, amtColor: Color) { Row(modifier = Modifier.padding(horizontal = 16.dp, vertical = 12.dp), verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(12.dp)) { Box(modifier = Modifier.size(40.dp).clip(RoundedCornerShape(12.dp)).background(iconBg), contentAlignment = Alignment.Center) { Icon(icon, null, tint = iconTint, modifier = Modifier.size(18.dp)) }; Column(modifier = Modifier.weight(1f)) { Text(name, fontSize = 13.sp, fontWeight = FontWeight.Bold, color = Color(0xFF0D2B2A), maxLines = 1); Text(sub, fontSize = 11.sp, color = Color(0xFF8AB5B1), maxLines = 1) }; Text(amt, fontSize = 13.sp, fontWeight = FontWeight.Bold, color = amtColor) } }
-@Composable internal fun LogRow(dot: Color, text: String, time: String) { Row(modifier = Modifier.padding(horizontal = 16.dp, vertical = 11.dp), horizontalArrangement = Arrangement.spacedBy(10.dp), verticalAlignment = Alignment.Top) { Box(modifier = Modifier.padding(top = 5.dp).size(8.dp).clip(CircleShape).background(dot)); Column { Text(text, fontSize = 12.sp, color = Color(0xFF3D6360), lineHeight = 18.sp); Text(time, fontSize = 10.sp, color = Color(0xFF8AB5B1), modifier = Modifier.padding(top = 2.dp)) } } }
+@Composable internal fun StatCard(label: String, value: String, badge: String, bc: Color, btc: Color, sub: String, modifier: Modifier) { Card(modifier = modifier, shape = RoundedCornerShape(12.dp), colors = CardDefaults.cardColors(containerColor = Color.White), elevation = CardDefaults.cardElevation(2.dp)) { Column(modifier = Modifier.padding(14.dp)) { Text(label, fontSize = 10.sp, color = TextLight, letterSpacing = 0.6.sp, fontWeight = FontWeight.SemiBold); Text(value, fontSize = 21.sp, fontWeight = FontWeight.Bold, color = TextDark, modifier = Modifier.padding(top = 5.dp)); Row(modifier = Modifier.padding(top = 4.dp), verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(4.dp)) { Surface(shape = RoundedCornerShape(10.dp), color = bc) { Text(badge, fontSize = 10.sp, fontWeight = FontWeight.SemiBold, color = btc, modifier = Modifier.padding(horizontal = 8.dp, vertical = 2.dp)) }; Text(sub, fontSize = 10.sp, color = TextLight) } } } }
+@Composable internal fun TrxRow(icon: ImageVector, iconBg: Color, iconTint: Color, name: String, sub: String, amt: String, amtColor: Color) { Row(modifier = Modifier.padding(horizontal = 16.dp, vertical = 12.dp), verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(12.dp)) { Box(modifier = Modifier.size(40.dp).clip(RoundedCornerShape(12.dp)).background(iconBg), contentAlignment = Alignment.Center) { Icon(icon, null, tint = iconTint, modifier = Modifier.size(18.dp)) }; Column(modifier = Modifier.weight(1f)) { Text(name, fontSize = 13.sp, fontWeight = FontWeight.Bold, color = TextDark, maxLines = 1); Text(sub, fontSize = 11.sp, color = TextLight, maxLines = 1) }; Text(amt, fontSize = 13.sp, fontWeight = FontWeight.Bold, color = amtColor) } }
+@Composable internal fun LogRow(dot: Color, text: String, time: String) { Row(modifier = Modifier.padding(horizontal = 16.dp, vertical = 11.dp), horizontalArrangement = Arrangement.spacedBy(10.dp), verticalAlignment = Alignment.Top) { Box(modifier = Modifier.padding(top = 5.dp).size(8.dp).clip(CircleShape).background(dot)); Column { Text(text, fontSize = 12.sp, color = TextMid, lineHeight = 18.sp); Text(time, fontSize = 10.sp, color = TextLight, modifier = Modifier.padding(top = 2.dp)) } } }

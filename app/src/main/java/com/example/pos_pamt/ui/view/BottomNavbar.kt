@@ -15,15 +15,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import com.example.pos_pamt.ui.theme.*
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.pos_pamt.navigation.Screen
 
-private val Teal  = Color(0xFF00B5A3)
-private val Admin = Color(0xFF6366F1)
-private val Gray  = Color(0xFF8AB5B1)
 
 private data class NavItem(val route: String, val icon: ImageVector, val label: String)
 

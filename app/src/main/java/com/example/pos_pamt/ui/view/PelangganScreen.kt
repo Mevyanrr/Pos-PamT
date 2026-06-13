@@ -14,6 +14,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import com.example.pos_pamt.ui.theme.*
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -23,23 +24,15 @@ import com.example.pos_pamt.data.Pelanggan
 import com.example.pos_pamt.viewmodel.DataUiState
 import com.example.pos_pamt.viewmodel.PelangganViewModel
 
-private val Teal  = Color(0xFF00B5A3)
-private val Teal3 = Color(0xFFE0FAF7)
-private val Admin = Color(0xFF6366F1)
-private val TDark = Color(0xFF0D2B2A)
-private val T3    = Color(0xFF8AB5B1)
-private val Danger= Color(0xFFEF4444)
-private val Green = Color(0xFF16A34A)
-private val Warn  = Color(0xFFF59E0B)
 
 @Composable
 fun PelangganScreen(viewModel: PelangganViewModel, isAdmin: Boolean, onBackClick: () -> Unit) {
     val state    = viewModel.pelangganState.collectAsStateWithLifecycle()
     val logState = viewModel.logPelangganState.collectAsStateWithLifecycle()
     val query    = viewModel.searchQuery.collectAsStateWithLifecycle()
-    val grad     = if (isAdmin) listOf(Admin, Color(0xFF818CF8)) else listOf(Teal, Color(0xFF00CDB9))
+    val grad     = if (isAdmin) listOf(Admin, AdminPurple2) else listOf(Teal, Teal2)
 
-    Column(modifier = Modifier.fillMaxSize().background(Color(0xFFF2F6F8))) {
+    Column(modifier = Modifier.fillMaxSize().background(BgPage)) {
         Box(modifier = Modifier.fillMaxWidth().background(Brush.linearGradient(grad)).padding(horizontal = 20.dp).padding(top = 44.dp, bottom = 18.dp)) {
             Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(12.dp)) {
                 IconButton(onClick = onBackClick, modifier = Modifier.size(40.dp).clip(RoundedCornerShape(10.dp)).background(Color.White.copy(alpha = 0.2f))) {
@@ -79,12 +72,12 @@ fun PelangganScreen(viewModel: PelangganViewModel, isAdmin: Boolean, onBackClick
                         }
                         Row(Modifier.fillMaxWidth().padding(bottom = 12.dp), Arrangement.spacedBy(10.dp)) {
                             StatCard("Total", "${filtered.size}", "terdaftar", Teal3, Teal, "pelanggan", Modifier.weight(1f))
-                            StatCard("Aktif", "${filtered.count { it.isActive }}", "${filtered.count { !it.isActive }} nonaktif", Color(0xFFDCFCE7), Green, "status aktif", Modifier.weight(1f))
+                            StatCard("Aktif", "${filtered.count { it.isActive }}", "${filtered.count { !it.isActive }} nonaktif", GreenLight, Green, "status aktif", Modifier.weight(1f))
                         }
                         InfoBox(
                             icon = if (isAdmin) Icons.Default.Lock else Icons.Default.Info,
                             iconTint = if (isAdmin) Admin else Teal,
-                            bg = if (isAdmin) Color(0xFFEDE9FE) else Teal3,
+                            bg = if (isAdmin) AdminLight else Teal3,
                             text = if (isAdmin) "Admin: tambah, ubah, hapus pelanggan. Setiap aksi tercatat di log_pelanggan."
                             else "Kasir: tambah & update pelanggan (INSERT+UPDATE). Hapus hanya Admin. Log pelanggan bisa dilihat kasir."
                         )
@@ -134,13 +127,13 @@ fun PelangganScreen(viewModel: PelangganViewModel, isAdmin: Boolean, onBackClick
             Text(pel.nama, fontSize = 13.sp, fontWeight = FontWeight.SemiBold, color = TDark)
             Text(if (pel.noTelp.isNotEmpty()) pel.noTelp else "Tidak ada no. telp", fontSize = 11.sp, color = T3, modifier = Modifier.padding(top = 1.dp))
         }
-        Surface(shape = RoundedCornerShape(8.dp), color = if (pel.isActive) Color(0xFFDCFCE7) else Color(0xFFFEE2E2)) {
+        Surface(shape = RoundedCornerShape(8.dp), color = if (pel.isActive) GreenLight else RedLight) {
             Text(if (pel.isActive) "Aktif" else "Nonaktif", fontSize = 10.sp, fontWeight = FontWeight.SemiBold, color = if (pel.isActive) Green else Danger, modifier = Modifier.padding(horizontal = 8.dp, vertical = 3.dp))
         }
         // Edit: kasir + admin | Delete: admin only
         Row(horizontalArrangement = Arrangement.spacedBy(4.dp)) {
             SmallIconBtn(Icons.Default.Edit, Teal3, Teal)
-            if (isAdmin) SmallIconBtn(Icons.Default.Delete, Color(0xFFFEE2E2), Danger)
+            if (isAdmin) SmallIconBtn(Icons.Default.Delete, RedLight, Danger)
         }
     }
 }
@@ -154,7 +147,7 @@ fun PelangganScreen(viewModel: PelangganViewModel, isAdmin: Boolean, onBackClick
     Row(modifier = Modifier.padding(horizontal = 16.dp, vertical = 11.dp), horizontalArrangement = Arrangement.spacedBy(10.dp), verticalAlignment = Alignment.Top) {
         Box(modifier = Modifier.padding(top = 5.dp).size(8.dp).clip(CircleShape).background(dot))
         Column {
-            Text("aktivitas: ${log.aktivitas}", fontSize = 12.sp, color = Color(0xFF3D6360), lineHeight = 18.sp)
+            Text("aktivitas: ${log.aktivitas}", fontSize = 12.sp, color = TextMid, lineHeight = 18.sp)
             Text("pelanggan_id: ${log.pelangganId.take(8)}… · ${log.createdAt.take(10)}", fontSize = 10.sp, color = T3, modifier = Modifier.padding(top = 2.dp))
         }
     }

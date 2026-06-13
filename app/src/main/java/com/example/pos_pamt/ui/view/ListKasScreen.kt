@@ -16,6 +16,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import com.example.pos_pamt.ui.theme.*
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -24,12 +25,6 @@ import com.example.pos_pamt.data.Kas
 import com.example.pos_pamt.viewmodel.DataUiState
 import com.example.pos_pamt.viewmodel.KasViewModel
 
-private val AdminPurple  = Color(0xFF6366F1)
-private val TextDark     = Color(0xFF0D2B2A)
-private val TextGray     = Color(0xFF8AB5B1)
-private val BgPage       = Color(0xFFF2F6F8)
-private val DangerRed    = Color(0xFFEF4444)
-private val SuccessGreen = Color(0xFF14A97A)
 
 @Composable
 fun ListKasScreen(
@@ -48,7 +43,7 @@ fun ListKasScreen(
                 .fillMaxWidth()
                 .background(
                     brush = Brush.linearGradient(
-                        colors = listOf(AdminPurple, Color(0xFF818CF8))
+                        colors = listOf(AdminPurple, AdminPurple2)
                     )
                 )
                 .padding(horizontal = 20.dp)
@@ -250,14 +245,14 @@ private fun KasRow(kas: Kas) {
                 .size(40.dp)
                 .clip(RoundedCornerShape(12.dp))
                 .background(
-                    if (kas.isActive) Color(0xFFDCFCE7) else Color(0xFFFEF3C7)
+                    if (kas.isActive) GreenLight else YellowLight
                 ),
             contentAlignment = Alignment.Center
         ) {
             Icon(
                 imageVector        = Icons.Outlined.AccountBalanceWallet,
                 contentDescription = null,
-                tint               = if (kas.isActive) Color(0xFF16A34A) else Color(0xFFD97706),
+                tint               = if (kas.isActive) SuccessAlt else WarnDark,
                 modifier           = Modifier.size(20.dp)
             )
         }
@@ -279,13 +274,13 @@ private fun KasRow(kas: Kas) {
 
         Surface(
             shape = RoundedCornerShape(10.dp),
-            color = if (kas.isActive) Color(0xFFDCFCE7) else Color(0xFFFEE2E2)
+            color = if (kas.isActive) GreenLight else RedLight
         ) {
             Text(
                 text       = if (kas.isActive) "Aktif" else "Nonaktif",
                 fontSize   = 10.sp,
                 fontWeight = FontWeight.SemiBold,
-                color      = if (kas.isActive) Color(0xFF16A34A) else DangerRed,
+                color      = if (kas.isActive) SuccessAlt else DangerRed,
                 modifier   = Modifier.padding(horizontal = 8.dp, vertical = 3.dp)
             )
         }

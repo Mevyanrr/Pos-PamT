@@ -18,6 +18,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import com.example.pos_pamt.ui.theme.*
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -26,13 +27,6 @@ import com.example.pos_pamt.data.Pelanggan
 import com.example.pos_pamt.viewmodel.DataUiState
 import com.example.pos_pamt.viewmodel.PelangganViewModel
 
-private val BluePrimary  = Color(0xFF3B82F6)
-private val BlueLight    = Color(0xFFEFF6FF)
-private val TextDark     = Color(0xFF0D2B2A)
-private val TextGray     = Color(0xFF8AB5B1)
-private val BgPage       = Color(0xFFF2F6F8)
-private val SuccessGreen = Color(0xFF16A34A)
-private val DangerRed    = Color(0xFFEF4444)
 
 @Composable
 fun ListPelangganScreen(
@@ -52,7 +46,7 @@ fun ListPelangganScreen(
                 .fillMaxWidth()
                 .background(
                     brush = Brush.linearGradient(
-                        colors = listOf(BluePrimary, Color(0xFF60A5FA))
+                        colors = listOf(BluePrimary, BlueAlt2)
                     )
                 )
                 .padding(horizontal = 20.dp)
@@ -182,9 +176,9 @@ fun ListPelangganScreen(
                 is DataUiState.Success -> {
                     val filtered = state
                         .data.filter { p ->
-                        p.nama.contains(searchQuery.value, ignoreCase = true) ||
-                                p.noTelp.contains(searchQuery.value, ignoreCase = true)
-                    }
+                            p.nama.contains(searchQuery.value, ignoreCase = true) ||
+                                    p.noTelp.contains(searchQuery.value, ignoreCase = true)
+                        }
                     val totalAktif = filtered.count { it.isActive }
 
                     Row(
@@ -296,7 +290,7 @@ private fun PelangganRow(pelanggan: Pelanggan) {
 
         Surface(
             shape = RoundedCornerShape(10.dp),
-            color = if (pelanggan.isActive) Color(0xFFDCFCE7) else Color(0xFFFEE2E2)
+            color = if (pelanggan.isActive) GreenLight else RedLight
         ) {
             Text(
                 text       = if (pelanggan.isActive) "Aktif" else "Nonaktif",

@@ -14,6 +14,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import com.example.pos_pamt.ui.theme.*
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -24,15 +25,6 @@ import com.example.pos_pamt.data.PenjualanDetail
 import com.example.pos_pamt.viewmodel.DataUiState
 import com.example.pos_pamt.viewmodel.PenjualanViewModel
 
-private val Teal  = Color(0xFF00B5A3)
-private val Teal2 = Color(0xFF00CDB9)
-private val Teal3 = Color(0xFFE0FAF7)
-private val Admin = Color(0xFF6366F1)
-private val TDark = Color(0xFF0D2B2A)
-private val T2    = Color(0xFF3D6360)
-private val T3    = Color(0xFF8AB5B1)
-private val Danger= Color(0xFFEF4444)
-private val Green = Color(0xFF14A97A)
 
 @Composable
 fun TransaksiScreen(viewModel: PenjualanViewModel, isAdmin: Boolean, onBackClick: () -> Unit) {
@@ -45,9 +37,9 @@ fun TransaksiScreen(viewModel: PenjualanViewModel, isAdmin: Boolean, onBackClick
         return
     }
 
-    val grad = if (isAdmin) listOf(Admin, Color(0xFF818CF8)) else listOf(Teal, Teal2)
+    val grad = if (isAdmin) listOf(Admin, AdminPurple2) else listOf(Teal, Teal2)
 
-    Column(modifier = Modifier.fillMaxSize().background(Color(0xFFF2F6F8))) {
+    Column(modifier = Modifier.fillMaxSize().background(BgPage)) {
         Box(modifier = Modifier.fillMaxWidth().background(Brush.linearGradient(grad)).padding(horizontal = 20.dp).padding(top = 44.dp, bottom = 18.dp)) {
             Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(12.dp)) {
                 IconButton(onClick = onBackClick, modifier = Modifier.size(40.dp).clip(RoundedCornerShape(10.dp)).background(Color.White.copy(alpha = 0.2f))) {
@@ -72,7 +64,7 @@ fun TransaksiScreen(viewModel: PenjualanViewModel, isAdmin: Boolean, onBackClick
                 InfoBox(
                     icon = if (isAdmin) Icons.Default.AdminPanelSettings else Icons.Default.Person,
                     iconTint = if (isAdmin) Admin else Teal,
-                    bg = if (isAdmin) Color(0xFFEDE9FE) else Teal3,
+                    bg = if (isAdmin) AdminLight else Teal3,
                     text = if (isAdmin) "Admin melihat semua transaksi dari seluruh kasir. Bisa edit & hapus."
                     else "Menampilkan riwayat penjualan milik kamu saja (kasir_id = auth.uid()). Tidak bisa edit/hapus."
                 )
@@ -89,7 +81,7 @@ fun TransaksiScreen(viewModel: PenjualanViewModel, isAdmin: Boolean, onBackClick
                         } else {
                             Row(Modifier.fillMaxWidth().padding(bottom = 12.dp), Arrangement.spacedBy(10.dp)) {
                                 StatCard("Total Transaksi", "${list.size}", "tercatat", Teal3, Teal, "semua".takeIf { isAdmin } ?: "milik kamu", Modifier.weight(1f))
-                                StatCard("Total Penjualan", rupiahD(list.sumOf { it.total }), if (isAdmin) "semua kasir" else "milik kamu", Color(0xFFDCFCE7), Green, "penjualan", Modifier.weight(1f))
+                                StatCard("Total Penjualan", rupiahD(list.sumOf { it.total }), if (isAdmin) "semua kasir" else "milik kamu", GreenLight, Green, "penjualan", Modifier.weight(1f))
                             }
                             SectionLabel(if (isAdmin) "Semua Transaksi" else "Riwayat Transaksi")
                             Card(Modifier.fillMaxWidth(), shape = RoundedCornerShape(16.dp), colors = CardDefaults.cardColors(containerColor = Color.White), elevation = CardDefaults.cardElevation(2.dp)) {
@@ -116,9 +108,9 @@ private fun DetailTransaksiScreen(
     isAdmin   : Boolean,
     onBack    : () -> Unit
 ) {
-    val grad = if (isAdmin) listOf(Admin, Color(0xFF818CF8)) else listOf(Teal, Color(0xFF00CDB9))
+    val grad = if (isAdmin) listOf(Admin, AdminPurple2) else listOf(Teal, Teal2)
 
-    Column(modifier = Modifier.fillMaxSize().background(Color(0xFFF2F6F8))) {
+    Column(modifier = Modifier.fillMaxSize().background(BgPage)) {
         Box(modifier = Modifier.fillMaxWidth().background(Brush.linearGradient(grad)).padding(horizontal = 20.dp).padding(top = 44.dp, bottom = 18.dp)) {
             Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(12.dp)) {
                 IconButton(onClick = onBack, modifier = Modifier.size(40.dp).clip(RoundedCornerShape(10.dp)).background(Color.White.copy(alpha = 0.2f))) {
@@ -227,8 +219,8 @@ private fun DetailTransaksiScreen(
 
 @Composable private fun DetailInfoRow(icon: ImageVector, label: String, value: String) {
     Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(10.dp)) {
-        Icon(icon, null, tint = Color(0xFF8AB5B1), modifier = Modifier.size(16.dp))
-        Text(label, fontSize = 12.sp, color = Color(0xFF8AB5B1), modifier = Modifier.weight(1f))
-        Text(value, fontSize = 12.sp, fontWeight = FontWeight.SemiBold, color = Color(0xFF0D2B2A))
+        Icon(icon, null, tint = TextLight, modifier = Modifier.size(16.dp))
+        Text(label, fontSize = 12.sp, color = TextLight, modifier = Modifier.weight(1f))
+        Text(value, fontSize = 12.sp, fontWeight = FontWeight.SemiBold, color = TextDark)
     }
 }

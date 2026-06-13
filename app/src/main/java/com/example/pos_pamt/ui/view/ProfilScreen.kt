@@ -15,6 +15,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import com.example.pos_pamt.ui.theme.*
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -22,16 +23,6 @@ import androidx.compose.ui.unit.sp
 import com.example.pos_pamt.data.UserRole
 import com.example.pos_pamt.data.UserSession
 
-private val Teal  = Color(0xFF00B5A3)
-private val Teal2 = Color(0xFF00CDB9)
-private val Teal3 = Color(0xFFE0FAF7)
-private val Admin = Color(0xFF6366F1)
-private val Admin2= Color(0xFFEDE9FE)
-private val TDark = Color(0xFF0D2B2A)
-private val T2    = Color(0xFF3D6360)
-private val T3    = Color(0xFF8AB5B1)
-private val Danger= Color(0xFFEF4444)
-private val Green = Color(0xFF16A34A)
 
 @Composable
 fun ProfilScreen(
@@ -40,11 +31,11 @@ fun ProfilScreen(
     onBackClick  : () -> Unit
 ) {
     val isAdmin  = userSession.role is UserRole.Admin
-    val grad     = if (isAdmin) listOf(Admin, Color(0xFF818CF8)) else listOf(Teal, Teal2)
+    val grad     = if (isAdmin) listOf(Admin, AdminPurple2) else listOf(Teal, Teal2)
     val roleName = if (isAdmin) "Admin" else "Kasir"
     val inisial  = userSession.nama.take(2).uppercase().ifEmpty { roleName.take(2) }
 
-    Column(modifier = Modifier.fillMaxSize().background(Color(0xFFF2F6F8))) {
+    Column(modifier = Modifier.fillMaxSize().background(BgPage)) {
         // HEADER
         Box(
             modifier = Modifier.fillMaxWidth()
@@ -71,7 +62,7 @@ fun ProfilScreen(
             Spacer(Modifier.height(20.dp))
             Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(10.dp)) {
                 ProfilStatCard("47", "Transaksi\nBulan Ini", Teal3, Teal, Modifier.weight(1f))
-                ProfilStatCard("Rp 3.8M", "Total\nPenjualan", Color(0xFFDCFCE7), Green, Modifier.weight(1f))
+                ProfilStatCard("Rp 3.8M", "Total\nPenjualan", GreenLight, Green, Modifier.weight(1f))
             }
 
             // ADMIN: lihat semua profiles (RLS: admin lihat semua profiles)
@@ -84,7 +75,7 @@ fun ProfilScreen(
                         HorizontalDivider(color = Teal.copy(alpha = 0.07f), thickness = 0.5.dp)
                         ProfilesRow("FH", Teal3, Teal, "Flora Hapsari M", "flora.kasir@gmail.com", "Kasir", Teal)
                         HorizontalDivider(color = Teal.copy(alpha = 0.07f), thickness = 0.5.dp)
-                        ProfilesRow("SY", Color(0xFFDCFCE7), Green, "Syumaylah", "syumaylah@gmail.com", "Kasir", Teal)
+                        ProfilesRow("SY", GreenLight, Green, "Syumaylah", "syumaylah@gmail.com", "Kasir", Teal)
                     }
                 }
             }
@@ -107,11 +98,11 @@ fun ProfilScreen(
             SectionLabel("Pengaturan", top = 18)
             Card(Modifier.fillMaxWidth(), shape = RoundedCornerShape(16.dp), colors = CardDefaults.cardColors(containerColor = Color.White), elevation = CardDefaults.cardElevation(2.dp)) {
                 Column {
-                    PengaturanRow(Icons.Default.Lock, Color(0xFFDBEAFE), Color(0xFF2563EB), "Ganti Password", "Keamanan akun")
+                    PengaturanRow(Icons.Default.Lock, BlueLight, BluePrimary, "Ganti Password", "Keamanan akun")
                     HorizontalDivider(color = Teal.copy(alpha = 0.07f), thickness = 0.5.dp)
                     PengaturanRow(Icons.Default.Edit, Teal3, Teal, "Edit Profil", "Ubah username")
                     HorizontalDivider(color = Teal.copy(alpha = 0.07f), thickness = 0.5.dp)
-                    PengaturanRow(Icons.Default.History, Color(0xFFDCFCE7), Green, "Riwayat Aktivitas", "log_pelanggan, log_produk")
+                    PengaturanRow(Icons.Default.History, GreenLight, Green, "Riwayat Aktivitas", "log_pelanggan, log_produk")
                     if (isAdmin) {
                         HorizontalDivider(color = Teal.copy(alpha = 0.07f), thickness = 0.5.dp)
                         PengaturanRow(Icons.Default.ManageAccounts, Admin2, Admin, "Kelola Pengguna", "Manajemen user")
@@ -148,7 +139,7 @@ fun ProfilScreen(
             Box(modifier = Modifier.size(40.dp).clip(CircleShape).background(bg), contentAlignment = Alignment.Center) {
                 Text(value, fontSize = 12.sp, fontWeight = FontWeight.Bold, color = textColor)
             }
-            Text(label, fontSize = 10.sp, color = Color(0xFF8AB5B1), modifier = Modifier.padding(top = 6.dp), lineHeight = 14.sp)
+            Text(label, fontSize = 10.sp, color = TextLight, modifier = Modifier.padding(top = 6.dp), lineHeight = 14.sp)
         }
     }
 }

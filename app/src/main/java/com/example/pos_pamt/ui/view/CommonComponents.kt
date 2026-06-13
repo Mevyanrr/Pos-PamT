@@ -11,14 +11,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import com.example.pos_pamt.ui.theme.*
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
-private val Teal  = Color(0xFF00B5A3)
-private val Danger= Color(0xFFEF4444)
-private val T3    = Color(0xFF8AB5B1)
 
 @Composable
 fun LoadingBox() {
@@ -63,7 +61,7 @@ fun InfoBox(icon: ImageVector, iconTint: Color, bg: Color, text: String) {
     Surface(modifier = Modifier.fillMaxWidth().padding(bottom = 14.dp), shape = RoundedCornerShape(8.dp), color = bg) {
         Row(modifier = Modifier.padding(10.dp), horizontalArrangement = Arrangement.spacedBy(8.dp), verticalAlignment = Alignment.Top) {
             Icon(icon, null, tint = iconTint, modifier = Modifier.size(16.dp).padding(top = 1.dp))
-            Text(text, fontSize = 11.sp, color = Color(0xFF3D6360), lineHeight = 16.sp)
+            Text(text, fontSize = 11.sp, color = TextMid, lineHeight = 16.sp)
         }
     }
 }

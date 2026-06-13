@@ -18,6 +18,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import com.example.pos_pamt.ui.theme.*
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -26,12 +27,6 @@ import com.example.pos_pamt.data.Barang
 import com.example.pos_pamt.viewmodel.BarangViewModel
 import com.example.pos_pamt.viewmodel.DataUiState
 
-private val TealPrimary = Color(0xFF00B5A3)
-private val TealLight   = Color(0xFFE0FAF7)
-private val TextDark    = Color(0xFF0D2B2A)
-private val TextGray    = Color(0xFF8AB5B1)
-private val BgPage      = Color(0xFFF2F6F8)
-private val DangerRed   = Color(0xFFEF4444)
 
 @Composable
 fun ListBarangScreen(
@@ -51,7 +46,7 @@ fun ListBarangScreen(
                 .fillMaxWidth()
                 .background(
                     brush = Brush.linearGradient(
-                        colors = listOf(TealPrimary, Color(0xFF00CDB9))
+                        colors = listOf(TealPrimary, Teal2)
                     )
                 )
                 .padding(horizontal = 20.dp)
@@ -197,15 +192,15 @@ fun ListBarangScreen(
                             label          = "Total SKU",
                             value          = "${filtered.size}",
                             badge          = "Aktif: ${filtered.count { it.isActive }}",
-                            badgeColor     = Color(0xFFDCFCE7),
-                            badgeTextColor = Color(0xFF16A34A),
+                            badgeColor     = GreenLight,
+                            badgeTextColor = SuccessAlt,
                             modifier       = Modifier.weight(1f)
                         )
                         StatMiniCard(
                             label          = "Stok Menipis",
                             value          = "$stokMenipis",
                             badge          = "Perlu restock",
-                            badgeColor     = Color(0xFFFEE2E2),
+                            badgeColor     = RedLight,
                             badgeTextColor = DangerRed,
                             modifier       = Modifier.weight(1f)
                         )

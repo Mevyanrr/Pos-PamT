@@ -9,14 +9,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import com.example.pos_pamt.ui.theme.*
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.pos_pamt.viewmodel.AuthUiState
-private val TealPrimary = Color(0xFF00B5A3)
-private val TextDark = Color(0xFF0D2B2A)
-private val TextGray = Color(0xFF8AB5B1)
 
 @Composable
 fun LoginScreen(
@@ -30,7 +28,7 @@ fun LoginScreen(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color(0xFFF2F6F8))
+            .background(BgPage)
     ) {
 
         Box(
@@ -38,7 +36,7 @@ fun LoginScreen(
                 .fillMaxWidth()
                 .background(
                     brush = Brush.linearGradientBrush(
-                        colors = listOf(TealPrimary, Color(0xFF00CDB9))
+                        colors = listOf(TealPrimary, Teal2)
                     )
                 )
                 .padding(horizontal = 28.dp, vertical = 60.dp)
@@ -121,13 +119,13 @@ fun LoginScreen(
                         .fillMaxWidth()
                         .padding(bottom = 14.dp),
                     colors = CardDefaults.cardColors(
-                        containerColor = Color(0xFFFEE2E2)
+                        containerColor = RedLight
                     ),
                     shape = RoundedCornerShape(8.dp)
                 ) {
                     Text(
                         text = uiState.message,
-                        color = Color(0xFFDC2626),
+                        color = DangerDark,
                         fontSize = 12.sp,
                         fontWeight = FontWeight.SemiBold,
                         modifier = Modifier.padding(10.dp)
