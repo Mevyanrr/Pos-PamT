@@ -134,7 +134,6 @@ data class LogProduk(
     @SerialName("created_at") val createdAt         : String = ""
 )
 
-//log_pengeluaran
 @Serializable
 data class LogPengeluaran(
     val id                                                  : String = "",
@@ -145,4 +144,44 @@ data class LogPengeluaran(
     val perubahan                                           : Double = 0.0,
     val keterangan                                          : String = "",
     @SerialName("created_at")     val createdAt             : String = ""
+)
+
+@Serializable
+data class ProdukUpdate(
+    val stok: Double
+)
+
+@Serializable
+data class KasUpdate(
+    val saldo: Double
+)
+
+@Serializable
+data class LogKasInsert(
+    @SerialName("kas_id") val kasId: String,
+    val tipe: String,
+    @SerialName("saldo_awal") val saldoAwal: Double,
+    @SerialName("saldo_akhir") val saldoAkhir: Double,
+    val perubahan: Double,
+    val keterangan: String
+)
+
+@Serializable
+data class PenjualanInsert(
+    @SerialName("pelanggan_id") val pelangganId: String,
+    @SerialName("kas_id") val kasId: String,
+    @SerialName("kasir_id") val kasirId: String,
+    val total: Double,
+    @SerialName("jumlah_bayar") val jumlahBayar: Double,
+    val kembalian: Double,
+    @SerialName("waktu_penjualan") val waktuPenjualan: String
+)
+
+@Serializable
+data class PenjualanDetailInsert(
+    @SerialName("penjualan_id") val penjualanId: String,
+    @SerialName("produk_id") val produkId: String,
+    @SerialName("harga_satuan") val hargaSatuan: Double,
+    val qty: Double,
+    val subtotal: Double
 )

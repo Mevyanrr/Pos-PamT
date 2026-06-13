@@ -90,7 +90,7 @@ fun TransaksiScreen(viewModel: PenjualanViewModel, isAdmin: Boolean, kasirId: St
                         iconTint = if (isAdmin) Admin else Teal,
                         bg = if (isAdmin) AdminLight else Teal3,
                         text = if (isAdmin) "Admin melihat semua transaksi dari seluruh kasir. Bisa hapus."
-                        else "Menampilkan riwayat penjualan milik kamu saja (kasir_id = auth.uid()). Tidak bisa edit/hapus."
+                        else "Menampilkan riwayat penjualan milik kamu saja. Tidak bisa edit/hapus."
                     )
                 }
                 item {

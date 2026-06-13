@@ -45,24 +45,50 @@ class PenjualanRepository {
         val kembalian = jumlahBayar - subtotal
 
         val penjualan = supabase.postgrest["penjualan"].insert(
-            mapOf(
-                "pelanggan_id" to pelangganId,
-                "kas_id" to kasId,
-                "kasir_id" to kasirId,
-                "total" to subtotal,
-                "jumlah_bayar" to jumlahBayar,
-                "kembalian" to kembalian,
-                "waktu_penjualan" to "now()"
+            PenjualanInsert(
+                pelangganId = pelangganId,
+                kasId = kasId,
+                kasirId = kasirId,
+                total = subtotal,
+                jumlahBayar = jumlahBayar,
+                kembalian = kembalian,
+                waktuPenjualan = "now()"
             )
         ) { select() }.decodeSingle<Penjualan>()
 
         supabase.postgrest["penjualan_detail"].insert(
-            mapOf(
-                "penjualan_id" to penjualan.id,
-                "produk_id" to produkId,
-                "harga_satuan" to hargaSatuan,
-                "qty" to qty,
-                "subtotal" to subtotal
+            PenjualanDetailInsert(
+                penjualanId = penjualan.id,
+                produkId = produkId,
+                hargaSatuan = hargaSatuan,
+                qty = qty,
+                subtotal = subtotal
+            )
+        )
+
+        val produk = supabase.postgrest["produk"]
+            .select { filter { eq("id", produkId) } }
+            .decodeSingle<Produk>()
+        supabase.postgrest["produk"].update(
+            ProdukUpdate(stok = produk.stok - qty)
+        ) { filter { eq("id", produkId) } }
+
+        val kas = supabase.postgrest["kas"]
+            .select { filter { eq("id", kasId) } }
+            .decodeSingle<Kas>()
+        val saldoBaru = kas.saldo + subtotal
+        supabase.postgrest["kas"].update(
+            KasUpdate(saldo = saldoBaru)
+        ) { filter { eq("id", kasId) } }
+
+        supabase.postgrest["log_kas"].insert(
+            LogKasInsert(
+                kasId = kasId,
+                tipe = "masuk",
+                saldoAwal = kas.saldo,
+                saldoAkhir = saldoBaru,
+                perubahan = subtotal,
+                keterangan = "Penjualan #${penjualan.id.take(8)}"
             )
         )
     }
