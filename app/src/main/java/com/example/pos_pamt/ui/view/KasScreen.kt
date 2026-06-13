@@ -229,7 +229,6 @@ fun KasScreen(viewModel: KasViewModel, onBackClick: () -> Unit) {
     }
 }
 
-// ─── KasStatCard — FIX nominal tidak kepisah ─────────────────────────────────
 @Composable
 private fun KasStatCard(label: String, value: String, sub1: String, sub2: String, bgIcon: Color, color: Color, modifier: Modifier) {
     Card(
@@ -266,7 +265,6 @@ private fun KasStatCard(label: String, value: String, sub1: String, sub2: String
     }
 }
 
-// ─── KasRow — FIX button edit delete tidak nyambung ──────────────────────────
 @Composable
 private fun KasRow(kas: Kas, onEdit: () -> Unit, onHapus: () -> Unit) {
     Row(
@@ -303,7 +301,6 @@ private fun KasRow(kas: Kas, onEdit: () -> Unit, onHapus: () -> Unit) {
     }
 }
 
-// ─── KasLogRow ────────────────────────────────────────────────────────────────
 @Composable
 private fun KasLogRow(log: LogKas) {
     val isMasuk = log.tipe.equals("masuk", true)
@@ -327,7 +324,6 @@ private fun KasLogRow(log: LogKas) {
     }
 }
 
-// ─── Dialog Tambah ────────────────────────────────────────────────────────────
 @Composable
 fun DialogTambahKas(onDismiss: () -> Unit, onSimpan: (String, Double) -> Unit) {
     var nama      by remember { mutableStateOf("") }
@@ -382,7 +378,6 @@ fun DialogTambahKas(onDismiss: () -> Unit, onSimpan: (String, Double) -> Unit) {
     )
 }
 
-// ─── Dialog Edit ──────────────────────────────────────────────────────────────
 @Composable
 fun DialogEditKas(kas: Kas, onDismiss: () -> Unit, onSimpan: (String, Double, Boolean) -> Unit) {
     var nama      by remember { mutableStateOf(kas.nama) }
