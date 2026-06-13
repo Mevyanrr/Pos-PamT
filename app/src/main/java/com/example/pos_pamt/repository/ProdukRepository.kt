@@ -27,4 +27,9 @@ class ProdukRepository {
     suspend fun hapus(id: String) {
         supabase.postgrest["produk"].delete { filter { eq("id", id) } }
     }
+
+    suspend fun getLogProduk(): List<LogProduk> =
+        supabase.postgrest["log_produk"]
+            .select { order("created_at", Order.DESCENDING); limit(15) }
+            .decodeList()
 }

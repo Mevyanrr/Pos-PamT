@@ -9,7 +9,6 @@ import kotlinx.coroutines.launch
 
 class ProdukViewModel : ViewModel() {
     private val produkRepo = ProdukRepository()
-    private val logRepo    = LogRepository()
 
     private val _produkState = MutableStateFlow<DataUiState<List<Produk>>>(DataUiState.Idle)
     val produkState: StateFlow<DataUiState<List<Produk>>> = _produkState
@@ -45,7 +44,7 @@ class ProdukViewModel : ViewModel() {
     fun loadLogProduk() {
         viewModelScope.launch {
             _logProdukState.value = DataUiState.Loading
-            try { _logProdukState.value = DataUiState.Success(logRepo.getLogProduk()) }
+            try { _logProdukState.value = DataUiState.Success(produkRepo.getLogProduk()) }
             catch (e: Exception) { _logProdukState.value = DataUiState.Error(e.message ?: "Gagal memuat log.") }
         }
     }

@@ -8,8 +8,7 @@ import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 
 class PengeluaranViewModel : ViewModel() {
-    private val repo    = PengeluaranRepository()
-    private val logRepo = LogRepository()
+    private val repo = PengeluaranRepository()
 
     private val _pengeluaranState = MutableStateFlow<DataUiState<List<Pengeluaran>>>(DataUiState.Idle)
     val pengeluaranState: StateFlow<DataUiState<List<Pengeluaran>>> = _pengeluaranState
@@ -78,7 +77,7 @@ class PengeluaranViewModel : ViewModel() {
         viewModelScope.launch {
             try {
                 _logPengeluaranState.value = DataUiState.Loading
-                _logPengeluaranState.value = DataUiState.Success(logRepo.getLogPengeluaran())
+                _logPengeluaranState.value = DataUiState.Success(repo.getLogPengeluaran())
             } catch (e: Exception) {
                 _logPengeluaranState.value = DataUiState.Error(e.message ?: "Gagal memuat log.")
             }

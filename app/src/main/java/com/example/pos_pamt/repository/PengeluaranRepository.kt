@@ -53,4 +53,9 @@ class PengeluaranRepository {
         supabase.postgrest["pengeluaran"]
             .delete { filter { eq("id", id) } }
     }
+
+    suspend fun getLogPengeluaran(): List<LogPengeluaran> =
+        supabase.postgrest["log_pengeluaran"]
+            .select { order("created_at", Order.DESCENDING); limit(15) }
+            .decodeList()
 }
