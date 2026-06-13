@@ -22,22 +22,26 @@ class KasRepository {
     }
 
     suspend fun tambahKas(nama: String, saldo: Double) {
-        supabase.from("kas").insert(mapOf(
-            "nama"      to nama,
-            "saldo"     to saldo,
-            "is_active" to true
-        ))
+        supabase.postgrest["kas"].insert(
+            mapOf(
+                "nama"      to nama,
+                "saldo"     to saldo,
+                "is_active" to true
+            )
+        )
     }
 
     suspend fun editKas(id: String, nama: String, saldo: Double, isActive: Boolean) {
-        supabase.from("kas").update(mapOf(
-            "nama"      to nama,
-            "saldo"     to saldo,
-            "is_active" to isActive
-        )) { filter { eq("id", id) } }
+        supabase.postgrest["kas"].update(
+            mapOf(
+                "nama"      to nama,
+                "saldo"     to saldo,
+                "is_active" to isActive
+            )
+        ) { filter { eq("id", id) } }
     }
 
     suspend fun hapusKas(id: String) {
-        supabase.from("kas").delete { filter { eq("id", id) } }
+        supabase.postgrest["kas"].delete { filter { eq("id", id) } }
     }
 }
